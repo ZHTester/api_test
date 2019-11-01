@@ -126,8 +126,9 @@ class OperExcel:
 if __name__ == '__main__':
     p = OperExcel(0)
     a = p.get_cols_data()
-    for i in range(len(a)):
-        print(i)
-        print(p.get_row_value(i))
+    print(a)
+    # for i in range(len(a)):
+    #     print(i)
+    #     print(p.get_row_value(i))
 
 

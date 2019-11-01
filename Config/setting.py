@@ -8,10 +8,8 @@
 
 配置文件 =====-----相关变量-----======
 """
-
-# =============------文件路径------===========================
-path_excle = r'../Config/CaseResult.xlsx'   # 接口自动化Excle文件路径
-
+# =============------文件路径------================================
+path_excle = r'../Config/CaseResult.xls'   # 接口自动化Excle文件路径
 
 # =============------Email相关变量------===========================
 MAIL_HOST = "secure.emailsrvr.com"  # 设置服务器
@@ -21,20 +19,24 @@ PORT = "465"  # 发送端口
 SENDER = 'Function@seektopser.com'  # 发送者
 RECEIVERS = ['Function@seektopser.com','elma@seektopser.com','leo@seektopser.com','felix@seektopser.com']  # 接收邮件
 SUBJECT = "BB项目娱乐端Android、IOS、Web H5 UI自动化"
-OUT_FILENAME = 'CaseResult.xlsx'
-
+OUT_FILENAME = 'CaseResult.xls'
 
 # ==============-----Excel 相关行号-----============================
 case_id = '0'
-case_name = '1'
-url = '2'
-run = '3'
-request_way = '4'  # 请求方式
-header = '5'  # header
-case_depend = '6' # case依赖
-data_depend = '7' # 依赖返回的数据
-filed_depend = '8'  # 数据依赖字段
-data = '9'
-expect = '10'
-result = '11'
-response_result = '12'
+be_after = '1'
+case_name = '2'
+url = '3'
+run = '4'
+request_way = '5'  # 请求方式
+header = '6'  # header
+case_depend = '7' # case依赖
+data_depend = '8' # 依赖返回的数据
+filed_depend = '9'  # 数据依赖字段
+data = '10'
+expect = '11'
+result = '12'
+response_result = '13'
+
+# ==============-----前后台接口地址前缀-----===========================
+url_pc = 'http://www.aalgds.com/api/'
+url_Htai = 'http://intra.aalgds.com/api/'

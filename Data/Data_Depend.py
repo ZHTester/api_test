@@ -22,6 +22,7 @@ class DependentData:
         self.CaseId = CaseId
         self.oper_excel =OperExcel(sheetId)
         self.getdata = GetData(sheetId)
+        self.sheetId = sheetId
 
     def get_case_data_line(self):
         """
@@ -36,7 +37,7 @@ class DependentData:
         运行依赖的caseID case request 请求
         :return:
         """
-        run_method  = RunMethod()
+        run_method  = RunMethod(self.sheetId)
         row_num = self.oper_excel.get_row_num(self.CaseId)  # 获取caseID对应的行号
         request_data = self.getdata.get_request_data(row_num)  # 拿到请求数据
         request_header = self.getdata.get_is_header(row_num)
@@ -52,14 +53,15 @@ class DependentData:
         :param row:
         :return:
         """
-        depend_value = [] # 从犯返回的json提取出来的值
+        depend_value = [] # 从返回的json提取出来的值
         depend_data = self.getdata.get_depend_key(row)  # 获取json表达式
-        depend_data = depend_data.split(',') # 分隔符可以填入多个表达式
-        for depend_i in depend_data:
-            response_data = self.run_dependent()
-            json_exe = parse(depend_i)
-            madle = json_exe.find(response_data)
-            result = [math.value for math in madle][0]
-            depend_value.append(result)
-        return depend_value
+        if depend_data:
+            depend_data = depend_data.split(',') # 分隔符可以填入多个表达式
+            for depend_i in depend_data:
+                response_data = self.run_dependent()
+                json_exe = parse(depend_i)
+                madle = json_exe.find(response_data)
+                result = [math.value for math in madle][0]
+                depend_value.append(result)
+            return depend_value
 

@@ -22,6 +22,15 @@ class  GetData:
         """
         return self.oper_excle.get_lines()
 
+    def get_before_after(self,row):
+        """
+        获取属于哪个端  ====---获取前后端---====
+        :param row:
+        :return:
+        """
+        before_after = self.oper_excle.get_cell_value(row,int(be_after))
+        return before_after
+
     def get_case_name(self,row):
         """
         获取caseName  ====---用例名称---====
@@ -150,12 +159,8 @@ class  GetData:
         self.oper_excle.write_value(row,int(response_result),value)
 
 
-
-
-
-
-
-
 if __name__ == '__main__':
-    pass
+    g = GetData(0)
+    a = g.get_before_after(2)
+    print(a)
 
