@@ -18,6 +18,7 @@ from Data.Data_Depend import DependentData
 from Until.Opertion_Email import SEmail
 from Until.Get_Header import GetHeader
 from Base.Action_Interface import MethodInterface
+from Until.Other_Function import OtherFunction
 from Config.setting import *
 
 class RunMain:
@@ -29,6 +30,7 @@ class RunMain:
         self.sheetId = sheetId
         self.get_hea = GetHeader(sheetId)
         self.sign = MethodInterface(sheetId)
+        self.other_method = OtherFunction()
 
     def go_run(self):
         # ======----成功失败统计变量----=========

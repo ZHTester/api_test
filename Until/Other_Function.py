@@ -38,4 +38,18 @@ class OtherFunction:
         msg = '\n'.join(content)
         return  msg
 
-
+    def key_segmentation(self,request_header_data):
+        """
+        关联数据拆分
+        :param request_header_data:  1-data.token>data.userId<2-data.token>data.userId
+        :return:
+        """
+        header_data = None
+        request_data = None
+        request_header_data = request_header_data.split("<")
+        try:
+            header_data = request_header_data[0].split('-')
+            request_data = request_header_data[1].split('-')
+        except IndexError as e:
+            print('没有请求数据',e)
+        return header_data,request_data

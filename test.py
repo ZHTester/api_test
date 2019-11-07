@@ -7,8 +7,16 @@
 # @Software: PyCharm
 测试文件
 """
+a = '1-data.token>data.userId'
+h = None
+q = None
+try:
+    a = a.split("<")
+    h = a[0].split('-')
+    q = a[1].split('-')
+except IndexError as e:
+    print('没有请求数据')
 
-a = '1-data.token>data.userId 2-data1.token>data1.userId)'.split("-")
-b = a[1].split(' ')
-print(a[1])
-print(b)
+print(a)
+print(h)
+print(q)
