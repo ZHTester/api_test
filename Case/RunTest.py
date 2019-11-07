@@ -8,12 +8,15 @@
 
 case执行主函数类
 """
+import json
+import time
+
 from Data.Get_Data import GetData
 from Base.Opertion_Interface import RunMethod
 from Until.Common_Util import Compared
 from Data.Data_Depend import DependentData
 from Until.Opertion_Email import SEmail
-from Until.Other_Function import pass_fail_number
+from Until.Get_Header import GetHeader
 from Base.Action_Interface import MethodInterface
 from Config.setting import *
 
@@ -24,10 +27,12 @@ class RunMain:
         self.comm = Compared()
         self.sendemail = SEmail()
         self.sheetId = sheetId
+        self.get_hea = GetHeader(sheetId)
         self.sign = MethodInterface(sheetId)
 
     def go_run(self):
         # ======----成功失败统计变量----=========
+        global data_response_v,res
         pass_count = []
         fail_count = []
         row_line = self.get_data.get_case_lines()
@@ -35,55 +40,70 @@ class RunMain:
             is_run = self.get_data.get_is_run(i)
             if is_run:
                 # ======---获取对应Excle中的数据---======
-                CaseN = self.get_data.get_case_name(i)
                 request_url = self.get_data.get_url(i)
                 request_data = self.get_data.get_request_data(i)
                 request_expect = self.get_data.get_expected_data(i)
                 request_method = self.get_data.get_is_requestMethod(i)
                 request_header = self.get_data.get_is_header(i)
                 request_ba = self.get_data.get_before_after(i)
+                depend_data1 = self.get_data.get_depend_key(i)  # 获取json表达式
+                update_da = self.get_data.get_update_data(i)  # 拿到更新数据
                 dependCase = self.get_data.get_is_depend(i)  # 拿到case依赖 执行依赖
+
                 # ======---判断是否有依赖case---======
                 if dependCase is not None:
                     try:
-                        depend_data = DependentData(dependCase, self.sheetId)   # 初始化数据关联类
-                        data_response_key = depend_data.get_data_for_key(i)
-                        depend_key = self.get_data.get_depend_field(i)
-                        request_data[depend_key] = data_response_key
+                        depend_data = DependentData(dependCase,self.sheetId,update_da)   # 初始化数据关联类
+                        data_response_value= depend_data.get_data_for_key(i)  #  获取返回数据 value
+                        depend_key = self.get_data.get_depend_field(i)  # key
+                        num_a = len(data_response_value)
+                        for num in range(num_a):
+                            request_header[depend_key[num]] = data_response_value[num]
                     except Exception as e:
                         self.get_data.write_result(i, '测试失败')
-                        self.get_data.write_response(i, "依赖数据未在Response中找到或表达式错误****错误信息:%s" % str(e))
-                        continue
+                        self.get_data.write_response(i, "依赖数据错误或返回数据错误---错误信息:%s---" % str(e))
+                        raise
 
-                if 'login' in request_url:
-                    request_header = eval(request_header)
-                    sign = self.sign.getSign()
-                    dic_sign = {"sign": sign}
-                    request_header.update(dic_sign)
-                else:
-                    request_header = eval(request_header)
 
-                # ======---执行接口测试请求---======
+                if depend_data1 is not None:
+                    if 'id' in depend_data1:
+                        login_header = self.get_data.get_is_sheader(1)
+                        request_header.update(login_header)
+                    if 'userId' in depend_data1:
+                        login_header = self.get_data.get_is_sheader(2)
+                        request_header.update(login_header)
+
+
+                if 'login/username' in request_url:
+                    self.get_hea.get_qiantai_login(request_header)
+
+                if 'login/submit' in request_url:
+                    self.get_hea.get_houtai_login(request_header,request_data)
+
+                # ========---执行接口测试请求---===========
+                self.get_data.write_response(i, '')
                 if request_ba  == 'a':
-                    request_data = eval(request_data)
                     res = self.run_method.run_main(request_method,url_pc+request_url,request_data,request_header)
-                    print(res)
                 else:
-                    res = self.run_method.run_main(request_method, url_Htai + request_url, request_data, request_header)
+                    res = self.run_method.run_main(request_method, url_Htai+request_url, request_data, request_header)
+                    print('-----{i}-----'.format(i=i))
 
                 # ======---执行断言操作判断接口是否执行成功---======
                 if self.comm.is_contain(request_expect, res):
                     self.get_data.write_result(i, '测试通过')
+                    self.get_data.write_response(i, res)  #  写入正常数据
                     pass_count.append(i)
                 else:
                     self.get_data.write_result(i, '测试失败')
                     self.get_data.write_response(i, res)  #  写入错误数据
                     fail_count.append(i)
 
-        message = pass_fail_number(pass_count,fail_count)
+        # message = pass_fail_number(pass_count,fail_count)
 
         # ======---发送邮件---======
         # self.sendemail.Email_UiTest(message,path_excle,OUT_FILENAME)
+
+
         print('======---本次接口测试结束---======')
 
 

@@ -29,13 +29,23 @@ url = '3'
 run = '4'
 request_way = '5'  # 请求方式
 header = '6'  # header
-case_depend = '7' # case依赖
-data_depend = '8' # 依赖返回的数据
-filed_depend = '9'  # 数据依赖字段
-data = '10'
-expect = '11'
-result = '12'
-response_result = '13'
+sheader ='7'
+case_depend = '8' # case依赖
+data_depend = '9' # 依赖返回的数据
+filed_depend = '10'  # 数据依赖字段
+data = '11'
+update_data = '12' # 更新数据
+expect = '13'
+result = '14'
+response_result = '15'
+
+# ==============-----数据库配置谷歌生成器-----===========================
+host_Mysql = '203.60.1.45'
+db_Mysql = 'global_3rd_db'
+port_Mysql = 3306
+user_Mysql = 'test'
+passwd_Mysql = 'Test@123'
+charset_Mysql = 'utf8'
 
 # ==============-----前后台接口地址前缀-----===========================
 url_pc = 'http://www.aalgds.com/api/'

@@ -6,6 +6,7 @@
 # @FileName    : Get_Data.py
 # @Software: PyCharm
 """
+import datetime
 
 from Until.Opertion_Excle import OperExcel
 from Config.setting import *
@@ -14,6 +15,7 @@ from Config.setting import *
 class  GetData:
     def __init__(self,sheetId):
         self.oper_excle = OperExcel(sheetId)
+
 
     def get_case_lines(self):
         """
@@ -78,7 +80,21 @@ class  GetData:
         :return:
         """
         header_mode = self.oper_excle.get_cell_value(row,int(header))
+        if header_mode is not None:
+            header_mode = eval(header_mode)
         return header_mode
+
+    def get_is_sheader(self,row):
+        """
+        获取生成header ====---header---=====
+        :param row:
+        :return:
+        """
+        header_mode = self.oper_excle.get_cell_value(row,int(sheader))
+        if header_mode is not '':
+            header_mode = eval(header_mode)
+        return header_mode
+
 
     def get_is_depend(self,row):
         """
@@ -124,10 +140,10 @@ class  GetData:
         """
         request_data = self.oper_excle.get_cell_value(row,int(data))
 
-        if request_data == "":
-            return None
-        else:
+        if request_data is not '':
+            request_data = eval(request_data)
             return request_data
+        return  None
 
     def get_expected_data(self,row):
         """
@@ -139,6 +155,18 @@ class  GetData:
         if expect_data == '':
             return None
         return expect_data
+
+    def get_update_data(self,row):
+        """
+        获取更新数据
+        :param row:
+        :return:
+        """
+        Update_data = self.oper_excle.get_cell_value(row,int(update_data))
+        if Update_data == '':
+            return None
+        Update_data = eval(Update_data)
+        return Update_data
 
     def write_result(self,row,value):
         """
@@ -158,9 +186,17 @@ class  GetData:
         """
         self.oper_excle.write_value(row,int(response_result),value)
 
+    def write_header(self,row,value):
+        """
+        写入已有的header
+        :param row:
+        :param value:
+        :return:
+        """
+        self.oper_excle.write_value(row,int(sheader),value)
+
 
 if __name__ == '__main__':
-    g = GetData(0)
-    a = g.get_before_after(2)
-    print(a)
-
+    now = datetime.datetime.now()
+    user_birthday = now.strftime("%Y-%m-%d")
+    print(user_birthday)

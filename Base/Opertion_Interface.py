@@ -37,13 +37,13 @@ class RunMethod:
         i = self.get_row()
         try:
             if header is not None:
-                res = self.r.post(url=url,data=data,headers=header,timeout=10).json()
+                res = self.r.post(url=url,data=data,headers=header,timeout=20).json()
             else:
-                res = self.r.post(url=url,data=data,timeout=10).json()
+                res = self.r.post(url=url,data=data,timeout=20).json()
             return res
         except Exception as e:
             self.get_data.write_result(i, '测试失败')
-            self.get_data.write_response(i, "====---系统维护---====")  # 写入错误数据
+            self.get_data.write_response(i, "====---错误信息---{0}====".format(e))  # 写入错误数据
 
     def get_main(self,url,data,header=None):
         """
@@ -62,7 +62,7 @@ class RunMethod:
             return res
         except Exception as e:
             self.get_data.write_result(i, '测试失败')
-            self.get_data.write_response(i, "====---系统维护---====")  # 写入错误数据
+            self.get_data.write_response(i, "====---错误信息---{0}====".format(e))  # 写入错误数据
 
 
 

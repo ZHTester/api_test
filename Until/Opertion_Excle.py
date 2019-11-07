@@ -15,10 +15,9 @@ from xlutils.copy import copy
 from  Config.setting import *
 
 
-
 class OperExcel:
 
-    def __init__(self,sheet_id,file_name=None,):
+    def __init__(self,sheet_id,file_name=None):
         """
         构造函数 初始化类对象属性
         :param file_name: 文件名称

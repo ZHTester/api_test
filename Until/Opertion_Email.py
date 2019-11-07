@@ -13,7 +13,7 @@ from email.mime.text import MIMEText
 from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from  Config.setting import *
-from Until.Other_Function import pass_fail_number
+from Until.Other_Function import OtherFunction
 
 
 class SEmail:
@@ -64,6 +64,7 @@ class SEmail:
 
 if __name__ == '__main__':
     send = SEmail()
-    message = pass_fail_number(444.0, 11.0)
+    s = OtherFunction(0)
+    message = s.pass_fail_number(444.0, 11.0)
     s = SEmail()
     s.Email_UiTest(message, path_excle, OUT_FILENAME)
