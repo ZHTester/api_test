@@ -7,7 +7,7 @@
 # @Software: PyCharm
 测试文件
 """
-a = '1-data.token>data.userId'
+a = '1-data.token>data.userId<1-data.token>data.userId'
 h = None
 q = None
 try:
@@ -18,5 +18,5 @@ except IndexError as e:
     print('没有请求数据')
 
 print(a)
-print(h)
+print(h[1].split(">")[0])
 print(q)

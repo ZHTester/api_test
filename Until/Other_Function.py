@@ -48,8 +48,8 @@ class OtherFunction:
         request_data = None
         request_header_data = request_header_data.split("<")
         try:
-            header_data = request_header_data[0].split('-')
-            request_data = request_header_data[1].split('-')
+            header_data = request_header_data[0].split('-')  # 拆分出的header请求数据  '1', 'data.token>data.userId'
+            request_data = request_header_data[1].split('-') # 拆分出的request_data请求数据  '2', 'data.token>data.userId'
         except IndexError as e:
             print('没有请求数据',e)
         return header_data,request_data

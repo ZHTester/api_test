@@ -55,17 +55,29 @@ class RunMain:
                 # ======---判断是否有依赖case---======
                 if dependCase is not None:
                     try:
-                        depend_data = DependentData(dependCase,self.sheetId,update_da)   # 初始化数据关联类
-                        data_response_value= depend_data.get_data_for_key(i)  #  获取返回数据 value
-                        depend_key = self.get_data.get_depend_field(i)  # key
-                        num_a = len(data_response_value)
-                        for num in range(num_a):
-                            request_header[depend_key[num]] = data_response_value[num]
+                        dc = dependCase.split('<')
+                        for caseN in dc:
+                            kn = caseN.split('-')[0]
+                            c_name = caseN.split('-')[1]
+                            depend_data = DependentData(c_name,self.sheetId,update_da)   # 初始化数据关联类
+                            depend_key = self.get_data.get_depend_field(i,kn[0]) # key
+
+                            if kn[0] == '1':
+                                data_response_value = depend_data.get_data_for_key(i,kn[0])  # 获取返回数据 value
+                                num_a = len(data_response_value)
+                                for num in range(num_a):
+                                    request_header[depend_key[num]] = data_response_value[num]
+
+                            if kn[0] == '2':
+                                data_response_value = depend_data.get_data_for_key(i,kn[0])  # 获取返回数据 value
+                                num_a = len(data_response_value)
+                                for num in range(num_a):
+                                    request_data[depend_key[num]] = data_response_value[num]
+
                     except Exception as e:
                         self.get_data.write_result(i, '测试失败')
                         self.get_data.write_response(i, "依赖数据错误或返回数据错误---错误信息:%s---" % str(e))
                         raise
-
 
                 if depend_data1 is not None:
                     if 'id' in depend_data1:
@@ -74,7 +86,6 @@ class RunMain:
                     if 'userId' in depend_data1:
                         login_header = self.get_data.get_is_sheader(2)
                         request_header.update(login_header)
-
 
                 if 'login/username' in request_url:
                     self.get_hea.get_qiantai_login(request_header)
@@ -88,7 +99,7 @@ class RunMain:
                     res = self.run_method.run_main(request_method,url_pc+request_url,request_data,request_header)
                 else:
                     res = self.run_method.run_main(request_method, url_Htai+request_url, request_data, request_header)
-                    print('-----{i}-----'.format(i=i))
+                    print('---------------------------------------{0}-------------------------------------'.format(i))
 
                 # ======---执行断言操作判断接口是否执行成功---======
                 if self.comm.is_contain(request_expect, res):

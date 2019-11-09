@@ -124,7 +124,7 @@ class OperExcel:
 
 if __name__ == '__main__':
     p = OperExcel(0)
-    a = p.get_cols_data()
+    a = p.get_row_num('ns2')
     print(a)
     # for i in range(len(a)):
     #     print(i)

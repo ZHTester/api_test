@@ -110,7 +110,7 @@ class  GetData:
 
     def get_depend_key(self,row):
         """
-        获取测试依赖数据  ======---依赖返回数据---======
+        获取测试依赖数据  ======---依赖返回数据---====== 9
         :param row:
         :return:
         """
@@ -120,13 +120,18 @@ class  GetData:
         else:
             return depend_key
 
-    def get_depend_field(self,row):
+    def get_depend_field(self,row,k_num):
         """
-        获取数据依赖字段  =====--数据依赖字段---====
+        获取数据依赖字段  =====--数据依赖字段---==== 10
+        :param k_num:
         :param row:
-        :return:
+        :return: 1-token>uid   <2-goodsId
         """
-        depend_data = self.oper_excle.get_cell_value(row,int(filed_depend)).split(">")
+        depend_data = self.oper_excle.get_cell_value(row, int(filed_depend)).split("<")
+        for key_num in depend_data:
+            kn = key_num.split('-')
+            if kn[0] == k_num:
+                depend_data = kn[1].split(">")
         if depend_data == '':
             return None
         else:

@@ -31,13 +31,15 @@ request_way = '5'  # 请求方式
 header = '6'  # header
 sheader ='7'
 case_depend = '8' # case依赖
-data_depend = '9' # 依赖返回的数据
-filed_depend = '10'  # 数据依赖字段
+data_depend = '9' # header 依赖返回的数据
+filed_depend = '10'  # header 数据依赖字段
 data = '11'
-update_data = '12' # 更新数据
-expect = '13'
-result = '14'
-response_result = '15'
+request_case_depend = '12'
+request_filed_depend = '13'
+update_data = '14' # 更新数据
+expect = '15'
+result = '16'
+response_result = '17'
 
 # ==============-----数据库配置谷歌生成器-----===========================
 host_Mysql = '203.60.1.45'

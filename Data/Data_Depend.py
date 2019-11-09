@@ -31,7 +31,7 @@ class DependentData:
         self.sign = MethodInterface(sheetId)
         self.get_hea = GetHeader(sheetId)
 
-    def get_case_data_line(self):
+    def get_case_data_line(self,CaseId=None):
         """
         获取caseID中的整行数据
         :return:
@@ -45,11 +45,10 @@ class DependentData:
         :return:
         """
         run_method  = RunMethod(self.sheetId)
-        row_num = self.oper_excel.get_row_num(self.CaseId)  # 获取caseID对应的行号
+        row_num = self.oper_excel.get_row_num(self.CaseId)  # 获取 casename 对应的行号
         request_data = self.getdata.get_request_data(row_num)  # 拿到请求数据
         request_url = self.getdata.get_url(row_num)
         request_header = self.getdata.get_is_header(row_num)
-        request_sheader = self.getdata.get_is_sheader(row_num)
         request_method = self.getdata.get_is_requestMethod(row_num) # 拿到请求方法
         request_ba = self.getdata.get_before_after(row_num)
 
@@ -70,26 +69,31 @@ class DependentData:
             res = run_method.run_main(request_method, url_Htai + request_url, request_data, request_header)
         return json.loads(res)
 
-    def get_data_for_key(self,row):
+    def get_data_for_key(self,row,num_dk):
         """
         根据依赖的key 执行依赖的case想要返回后通过 json_path 提取出对应的数据
+        :param num_dk:
         :param row:
         :return:
         """
-        global result1
+        global result1,depend_value
         depend_value = [] # 从返回的json提取出来的值
-        depend_data = self.getdata.get_depend_key(row)  # 获取json表达式
+        depend_data = self.getdata.get_depend_key(row).split("<")  # 获取json表达式
         if depend_data:
-            depend_data = depend_data.split('>') # 分隔符可以填入多个表达式
-            response_data = self.run_dependent()
-            for depend_i in depend_data:
-                json_exe = parse(depend_i)
-                madle = json_exe.find(response_data)
-                try:
-                    result1 = [math.value for math in madle][0]
-                    result1 = str(result1)
-                    depend_value.append(result1)
-                except IndexError as e:
-                    pass
-            return depend_value
+            for key_num in depend_data:
+                kn = key_num.split('-')
+                if kn[0] == num_dk:
+                    depend_data  = kn[1].split(">") # 分隔符可以填入多个表达式
+                    response_data = self.run_dependent()
+                    for depend_i in depend_data:
+                        json_exe = parse(depend_i)  # 获取对表达式
+                        madle = json_exe.find(response_data)  # 使用json_path获取数据
+                        try:
+                            result1 = [math.value for math in madle][0]
+                            result1 = str(result1)
+                            depend_value.append(result1)
+                        except IndexError as e:
+                            pass
+                    return depend_value
+
 
