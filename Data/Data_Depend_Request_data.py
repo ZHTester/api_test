@@ -6,7 +6,7 @@
 # @FileName    : Data_Depend.py
 # @Software: PyCharm
 
-获取依赖数据   - json_path 提取出依赖数据
+获取依赖数据   - json_path 提取出依赖数据 获取request_data依赖数据
 
 """
 import json

@@ -14,7 +14,7 @@ import time
 from Data.Get_Data import GetData
 from Base.Opertion_Interface import RunMethod
 from Until.Common_Util import Compared
-from Data.Data_Depend import DependentData
+from Data.Data_Depend_Header import DependentData
 from Until.Opertion_Email import SEmail
 from Until.Get_Header import GetHeader
 from Base.Action_Interface import MethodInterface
@@ -100,6 +100,7 @@ class RunMain:
                 else:
                     res = self.run_method.run_main(request_method, url_Htai+request_url, request_data, request_header)
                     print('---------------------------------------{0}-------------------------------------'.format(i))
+                    print(res)
 
                 # ======---执行断言操作判断接口是否执行成功---======
                 if self.comm.is_contain(request_expect, res):

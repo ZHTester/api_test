@@ -150,6 +150,35 @@ class  GetData:
             return request_data
         return  None
 
+    def get_request_case_depend_value(self,row):
+        """
+        request_data 获取依赖数据的返回值 表达式
+        :param row:
+        :return:
+        """
+        depend_key = self.oper_excle.get_cell_value(row, int(request_case_depend_value))
+        if depend_key == "":
+            return None
+        else:
+            return depend_key
+
+    def get_request_case_depend_key(self,row,k_num):
+        """
+        request_data 获取依赖数据的表达式
+        :param k_num:
+        :param row:
+        :return: 1-token>uid   <2-goodsId
+        """
+        depend_data = self.oper_excle.get_cell_value(row, int(request_filed_depend_key)).split("<")
+        for key_num in depend_data:
+            kn = key_num.split('-')
+            if kn[0] == k_num:
+                depend_data = kn[1].split(">")
+        if depend_data == '':
+            return None
+        else:
+            return depend_data
+
     def get_expected_data(self,row):
         """
         获取预期数据 ==---预期结果---===
