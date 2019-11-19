@@ -14,7 +14,8 @@ import time
 from Data.Get_Data import GetData
 from Base.Opertion_Interface import RunMethod
 from Until.Common_Util import Compared
-from Data.Data_Depend_Header import DependentData
+from Data.Header_DA import DependentDataHeader
+from Data.Request_DA import DependentData
 from Until.Opertion_Email import SEmail
 from Until.Get_Header import GetHeader
 from Base.Action_Interface import MethodInterface
@@ -34,7 +35,7 @@ class RunMain:
 
     def go_run(self):
         # ======----成功失败统计变量----=========
-        global data_response_v,res
+        global data_response_v,res, data_rr_value
         pass_count = []
         fail_count = []
         row_line = self.get_data.get_case_lines()
@@ -48,7 +49,6 @@ class RunMain:
                 request_method = self.get_data.get_is_requestMethod(i)
                 request_header = self.get_data.get_is_header(i)
                 request_ba = self.get_data.get_before_after(i)
-                depend_data1 = self.get_data.get_depend_key(i)  # 获取json表达式
                 update_da = self.get_data.get_update_data(i)  # 拿到更新数据
                 dependCase = self.get_data.get_is_depend(i)  # 拿到case依赖 执行依赖
 
@@ -59,33 +59,31 @@ class RunMain:
                         for caseN in dc:
                             kn = caseN.split('-')[0]
                             c_name = caseN.split('-')[1]
-                            depend_data = DependentData(c_name,self.sheetId,update_da)   # 初始化数据关联类
-                            depend_key = self.get_data.get_depend_field(i,kn[0]) # key
+                            depend_data_header = DependentDataHeader(c_name,self.sheetId,update_da)   # 初始化数据关联类 header
+                            depend_data_Request_data = DependentData(c_name, self.sheetId, update_da)  # 初始化数据关联类 requestData
 
-                            if kn[0] == '1':
-                                data_response_value = depend_data.get_data_for_key(i,kn[0])  # 获取返回数据 value
+                            if kn[0] == '1':  # header - 依赖
+                                depend_key_header = self.get_data.get_depend_field(i, kn[0])  # key
+                                data_response_value = depend_data_header.get_data_for_key(i,kn[0])  # 获取返回数据 value
                                 num_a = len(data_response_value)
+                                data_r_value = data_response_value[0]
                                 for num in range(num_a):
-                                    request_header[depend_key[num]] = data_response_value[num]
+                                    request_header[depend_key_header[num]] = data_r_value[num]
+                                    request_header.update(data_response_value[1])
 
-                            if kn[0] == '2':
-                                data_response_value = depend_data.get_data_for_key(i,kn[0])  # 获取返回数据 value
-                                num_a = len(data_response_value)
+                            if kn[0] == '2':  # 多个依赖 request_data依赖
+                                depend_key_request_data = self.get_data.get_request_case_depend_key(i, kn[0])  # key
+                                data_response_value = depend_data_Request_data.get_data_for_key(i,kn[0])  # 获取返回数据 value
+                                if data_response_value[1] is not None:
+                                    data_rr_value =data_response_value[0]
+                                    request_header.update(data_response_value[2])
+                                num_a = len(data_rr_value)
                                 for num in range(num_a):
-                                    request_data[depend_key[num]] = data_response_value[num]
-
+                                    request_data[depend_key_request_data[num]] = data_rr_value[num]
                     except Exception as e:
                         self.get_data.write_result(i, '测试失败')
                         self.get_data.write_response(i, "依赖数据错误或返回数据错误---错误信息:%s---" % str(e))
                         raise
-
-                if depend_data1 is not None:
-                    if 'id' in depend_data1:
-                        login_header = self.get_data.get_is_sheader(1)
-                        request_header.update(login_header)
-                    if 'userId' in depend_data1:
-                        login_header = self.get_data.get_is_sheader(2)
-                        request_header.update(login_header)
 
                 if 'login/username' in request_url:
                     self.get_hea.get_qiantai_login(request_header)
@@ -99,8 +97,8 @@ class RunMain:
                     res = self.run_method.run_main(request_method,url_pc+request_url,request_data,request_header)
                 else:
                     res = self.run_method.run_main(request_method, url_Htai+request_url, request_data, request_header)
-                    print('---------------------------------------{0}-------------------------------------'.format(i))
-                    print(res)
+                    print('-------------------{0}---------------------'.format(i))
+                    print(request_data)
 
                 # ======---执行断言操作判断接口是否执行成功---======
                 if self.comm.is_contain(request_expect, res):

@@ -6,7 +6,7 @@
 # @FileName    : Data_Depend.py
 # @Software: PyCharm
 
-获取依赖数据   - json_path 提取出依赖数据 获取request_data依赖数据
+获取依赖数据   - json_path 提取出依赖数据  获取Header的依赖数据
 
 """
 import json
@@ -21,7 +21,7 @@ from .Get_Data import GetData
 from jsonpath_rw import jsonpath, parse
 
 
-class DependentData:
+class DependentDataHeader:
     def __init__(self, CaseId,sheetId,up_date):
         self.update = up_date
         self.CaseId = CaseId
@@ -61,13 +61,13 @@ class DependentData:
 
         if 'login/submit' in request_url:
             self.get_hea.get_houtai_login(request_header, request_data)
-            self.getdata.write_header(row_num, str(request_header))
+            # self.getdata.write_header(row_num, str(request_header))
 
         if request_ba == 'a':
             res = run_method.run_main(request_method, url_pc + request_url, request_data, request_header)
         else:
             res = run_method.run_main(request_method, url_Htai + request_url, request_data, request_header)
-        return json.loads(res)
+        return json.loads(res),request_header
 
     def get_data_for_key(self,row,num_dk):
         """
@@ -87,13 +87,13 @@ class DependentData:
                     response_data = self.run_dependent()
                     for depend_i in depend_data:
                         json_exe = parse(depend_i)  # 获取对表达式
-                        madle = json_exe.find(response_data)  # 使用json_path获取数据
+                        madle = json_exe.find(response_data[0])  # 使用json_path获取数据
                         try:
                             result1 = [math.value for math in madle][0]
                             result1 = str(result1)
                             depend_value.append(result1)
                         except IndexError as e:
                             pass
-                    return depend_value
+                    return depend_value,response_data[1]
 
 

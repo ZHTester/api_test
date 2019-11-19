@@ -29,29 +29,28 @@ url = '3'
 run = '4'
 request_way = '5'  # 请求方式
 header = '6'  # header
-sheader ='7'
 """header依赖数据"""
-case_depend = '8' # case依赖
-data_depend = '9' # header 依赖返回的数据
-filed_depend = '10'  # header 数据依赖字段
+case_depend = '7' # case依赖
+data_depend = '8' # header 依赖返回的数据
+filed_depend = '9'  # header 数据依赖字段
 """--------------"""
-data = '11'
+data = '10'
 """-----------request_data 依赖数据----------"""
-request_case_depend_value = '12'
-request_filed_depend_key = '13'
+request_case_depend_value = '11'
+request_filed_depend_key = '12'
 """-----------------------------------------"""
-update_data = '14' # 更新数据
-expect = '15'
-result = '16'
-response_result = '17'
+update_data = '13' # 更新数据
+expect = '14'
+result = '15'
+response_result = '16'
 
 
 # ==============-----数据库配置谷歌生成器-----===========================
-host_Mysql = '203.60.1.45'
+host_Mysql = '203.60.1.61'
 db_Mysql = 'global_3rd_db'
 port_Mysql = 3306
 user_Mysql = 'test'
-passwd_Mysql = 'Test@123'
+passwd_Mysql = 'Seektop@123'
 charset_Mysql = 'utf8'
 
 # ==============-----前后台接口地址前缀-----===========================

@@ -63,11 +63,11 @@ class MethodInterface:
         global cur, conn
         try:
             conn = pymysql.connect(
-                host='203.60.1.45',
+                host='203.60.1.61',
                 db='global_3rd_db',
                 port=3306,
                 user='test',
-                passwd='Test@123',
+                passwd='Seektop@123',
                 charset='utf8',
             )
             cur = conn.cursor()
@@ -110,5 +110,5 @@ class MethodInterface:
 
 if __name__ == '__main__':
     a = MethodInterface(0)
-    c = a.getSign()
-    print(c[0])
+    c = a.getGoogleCode()
+    print(c)

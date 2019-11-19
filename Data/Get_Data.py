@@ -80,21 +80,9 @@ class  GetData:
         :return:
         """
         header_mode = self.oper_excle.get_cell_value(row,int(header))
-        if header_mode is not None:
-            header_mode = eval(header_mode)
-        return header_mode
-
-    def get_is_sheader(self,row):
-        """
-        获取生成header ====---header---=====
-        :param row:
-        :return:
-        """
-        header_mode = self.oper_excle.get_cell_value(row,int(sheader))
         if header_mode is not '':
             header_mode = eval(header_mode)
         return header_mode
-
 
     def get_is_depend(self,row):
         """
@@ -219,15 +207,6 @@ class  GetData:
         :return:
         """
         self.oper_excle.write_value(row,int(response_result),value)
-
-    def write_header(self,row,value):
-        """
-        写入已有的header
-        :param row:
-        :param value:
-        :return:
-        """
-        self.oper_excle.write_value(row,int(sheader),value)
 
 
 if __name__ == '__main__':

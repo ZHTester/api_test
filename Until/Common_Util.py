@@ -6,7 +6,7 @@
 # @FileName: common_util.py
 # @Software: PyCharm
 
-预期结果实际结果对比操作 ···
+公共部分-预期结果实际结果对比操作 ···单一接口结果判断
 """
 class Compared:
     @staticmethod

@@ -33,6 +33,7 @@ class GetHeader:
     def get_houtai_login(self, request_headers,request_datas):
         """
         后台header获取方式
+        :param request_datas:
         :param request_headers:
         :return:
         """
