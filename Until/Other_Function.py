@@ -14,7 +14,7 @@ import time
 class OtherFunction:
 
 
-    def pass_fail_number(self,pass_list,fail_list):
+    def pass_fail_number(self,pass_list,fail_list,title):
         """
         发送消息
         :return:
@@ -26,8 +26,7 @@ class OtherFunction:
         pass_result = "%.2f%%" % (pass_num / count_num * 100)
         fail_result = "%.2f%%" % (fail_num / count_num * 100)
 
-
-        content = ["[**********接口自动化测试**********]:",
+        content = ["[**********"+title+"**********]:",
                    "本次接口自动化测试总接口数量为:%s" % count_num,
                    "*1*通过个数为:%s个" % pass_num,
                    "*2*失败个数为:%s个" % fail_num,

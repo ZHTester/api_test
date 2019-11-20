@@ -13,14 +13,16 @@ import time
 
 from Data.Get_Data import GetData
 from Base.Opertion_Interface import RunMethod
+from Data.qh_Compared import QianHouCompared
 from Until.Common_Util import Compared
-from Data.Header_DA import DependentDataHeader
-from Data.Request_DA import DependentData
+from Data.DA_Header import DependentDataHeader
+from Data.DA_Request import DependentData
 from Until.Opertion_Email import SEmail
 from Until.Get_Header import GetHeader
 from Base.Action_Interface import MethodInterface
 from Until.Other_Function import OtherFunction
 from Config.setting import *
+
 
 class RunMain:
     def __init__(self,sheetId):
@@ -36,8 +38,13 @@ class RunMain:
     def go_run(self):
         # ======----成功失败统计变量----=========
         global data_response_v,res, data_rr_value
+        # 单一接口统计
         pass_count = []
         fail_count = []
+        # 前后端接口统计
+        c_pass_count = []
+        c_fail_count = []
+
         row_line = self.get_data.get_case_lines()
         for i in range(1,row_line):
             is_run = self.get_data.get_is_run(i)
@@ -51,6 +58,8 @@ class RunMain:
                 request_ba = self.get_data.get_before_after(i)
                 update_da = self.get_data.get_update_data(i)  # 拿到更新数据
                 dependCase = self.get_data.get_is_depend(i)  # 拿到case依赖 执行依赖
+                qh_response_data = self.get_data.get_qh_response_name_key(i)  # 拿到前后端需要执行的 case名称以及依赖表达式
+                qh_response_key = self.get_data.get_qh_response_key(i) # 拿到当前执行行的依赖表达式
 
                 # ======---判断是否有依赖case---======
                 if dependCase is not None:
@@ -65,8 +74,8 @@ class RunMain:
                             if kn[0] == '1':  # header - 依赖
                                 depend_key_header = self.get_data.get_depend_field(i, kn[0])  # key
                                 data_response_value = depend_data_header.get_data_for_key(i,kn[0])  # 获取返回数据 value
-                                num_a = len(data_response_value)
                                 data_r_value = data_response_value[0]
+                                num_a = len(data_r_value)
                                 for num in range(num_a):
                                     request_header[depend_key_header[num]] = data_r_value[num]
                                     request_header.update(data_response_value[1])
@@ -91,14 +100,28 @@ class RunMain:
                 if 'login/submit' in request_url:
                     self.get_hea.get_houtai_login(request_header,request_data)
 
-                # ========---执行接口测试请求---===========
+                # ========---单一接口执行接口测试请求---===========
                 self.get_data.write_response(i, '')
                 if request_ba  == 'a':
                     res = self.run_method.run_main(request_method,url_pc+request_url,request_data,request_header)
                 else:
                     res = self.run_method.run_main(request_method, url_Htai+request_url, request_data, request_header)
-                    print('-------------------{0}---------------------'.format(i))
-                    print(request_data)
+
+                # =====-----前后端返回接口数据对比-----======
+                if qh_response_data is not '':
+                    caseName_q = qh_response_data[0]  # 获取需要执行的用例名称
+                    caseName_k = qh_response_data[1]  # 获取需要执行的用例关键字 key
+                    run_depend_qh = QianHouCompared(caseName_q,self.sheetId)
+
+                    Compared_q = run_depend_qh.run_qhInterface_key(caseName_k)  # 前端数据返回list
+                    Compared_h = run_depend_qh.run_response_Interface_key(res1=res,depend_value=qh_response_key)  # 后端数据返回list
+
+                    if Compared_q == Compared_h:
+                        self.get_data.write_qh_response_result(i,'前后端接口数据一致:测试通过')
+                        c_pass_count.append(i)
+                    else:
+                        self.get_data.write_qh_response_result(i, '前后端接口数据不一致:测试失败')
+                        c_fail_count.append(i)
 
                 # ======---执行断言操作判断接口是否执行成功---======
                 if self.comm.is_contain(request_expect, res):
@@ -110,7 +133,11 @@ class RunMain:
                     self.get_data.write_response(i, res)  #  写入错误数据
                     fail_count.append(i)
 
-        # message = pass_fail_number(pass_count,fail_count)
+        d_message = self.other_method.pass_fail_number(pass_count,fail_count,"单一接口自动化测试")  # 单一接口数据统计
+        c_message = self.other_method.pass_fail_number(c_pass_count, c_fail_count, "前后端接口自动化测试")  # 前后端数据接口统计
+
+        print(d_message)
+        print(c_message)
 
         # ======---发送邮件---======
         # self.sendemail.Email_UiTest(message,path_excle,OUT_FILENAME)

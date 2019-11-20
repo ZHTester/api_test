@@ -45,5 +45,3 @@ class GetHeader:
         request_headers.update(dic_sign)
         request_datas.update({'code': GoogleCode})
 
-    def write_header_qh(self,row_num,request_headers):
-        self.getdata.write_header(row_num, str(request_headers))

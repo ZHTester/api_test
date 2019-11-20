@@ -125,6 +125,43 @@ class  GetData:
         else:
             return depend_data
 
+    def get_qh_response_name_key(self,row):
+        """
+        获取前端接口返回值  返回测试用例名称 和 依赖key
+        :param row:
+        :return:
+        """
+        response_data_key = self.oper_excle.get_cell_value(row,int(q_name_depend_key)).split("<")
+
+        if response_data_key != ['']:
+            caseN = response_data_key[0]
+            case_key = response_data_key[1]  # 数据1>数据2>数据3
+            return caseN,case_key
+        else:
+            return ''
+
+    def get_qh_response_key(self,row):
+        """
+        获取前端key
+        :param row:
+        :return:
+        """
+        response_data_key = self.oper_excle.get_cell_value(row,int(h_name_depend_key))
+        if response_data_key:
+            return response_data_key
+        else:
+            return None
+
+    def write_qh_response_result(self,row,value):
+        """
+        前后端结果写入
+        :param row:
+        :return:
+        """
+        self.oper_excle.write_value(row, int(qh_result), value)
+
+
+
     def get_request_data(self,row):
         """
         获取请求数据  ====---请求数据---====
