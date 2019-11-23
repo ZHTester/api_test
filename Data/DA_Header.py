@@ -54,14 +54,15 @@ class DependentDataHeader:
 
         if self.update is not None:
             request_data.update(self.update)
+            print(request_data)
 
         if 'login/username' in request_url:
             self.get_hea.get_qiantai_login(request_header)
-            # self.get_hea.write_header_qh(row_num,request_header)
+
 
         if 'login/submit' in request_url:
             self.get_hea.get_houtai_login(request_header, request_data)
-            # self.getdata.write_header(row_num, str(request_header))
+
 
         if request_ba == 'a':
             res = run_method.run_main(request_method, url_pc + request_url, request_data, request_header)

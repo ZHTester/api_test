@@ -50,6 +50,7 @@ class RunMain:
             is_run = self.get_data.get_is_run(i)
             if is_run:
                 # ======---获取对应Excle中的数据---======
+                caseNme =  self.get_data.get_case_name(i)
                 request_url = self.get_data.get_url(i)
                 request_data = self.get_data.get_request_data(i)
                 request_expect = self.get_data.get_expected_data(i)
@@ -68,10 +69,10 @@ class RunMain:
                         for caseN in dc:
                             kn = caseN.split('-')[0]
                             c_name = caseN.split('-')[1]
-                            depend_data_header = DependentDataHeader(c_name,self.sheetId,update_da)   # 初始化数据关联类 header
-                            depend_data_Request_data = DependentData(c_name, self.sheetId, update_da)  # 初始化数据关联类 requestData
 
                             if kn[0] == '1':  # header - 依赖
+                                depend_data_header = DependentDataHeader(c_name, self.sheetId,
+                                                                         update_da)  # 初始化数据关联类 header
                                 depend_key_header = self.get_data.get_depend_field(i, kn[0])  # key
                                 data_response_value = depend_data_header.get_data_for_key(i,kn[0])  # 获取返回数据 value
                                 data_r_value = data_response_value[0]
@@ -81,6 +82,8 @@ class RunMain:
                                     request_header.update(data_response_value[1])
 
                             if kn[0] == '2':  # 多个依赖 request_data依赖
+                                depend_data_Request_data = DependentData(c_name, self.sheetId,
+                                                                         update_da)  # 初始化数据关联类 requestData
                                 depend_key_request_data = self.get_data.get_request_case_depend_key(i, kn[0])  # key
                                 data_response_value = depend_data_Request_data.get_data_for_key(i,kn[0])  # 获取返回数据 value
                                 if data_response_value[1] is not None:
@@ -101,11 +104,14 @@ class RunMain:
                     self.get_hea.get_houtai_login(request_header,request_data)
 
                 # ========---单一接口执行接口测试请求---===========
+                print('----------------------{0}-----------------'.format(caseNme))
                 self.get_data.write_response(i, '')
                 if request_ba  == 'a':
                     res = self.run_method.run_main(request_method,url_pc+request_url,request_data,request_header)
                 else:
                     res = self.run_method.run_main(request_method, url_Htai+request_url, request_data, request_header)
+                # print(res)
+                print(request_data)
 
                 # =====-----前后端返回接口数据对比-----======
                 if qh_response_data is not '':
@@ -115,6 +121,8 @@ class RunMain:
 
                     Compared_q = run_depend_qh.run_qhInterface_key(caseName_k)  # 前端数据返回list
                     Compared_h = run_depend_qh.run_response_Interface_key(res1=res,depend_value=qh_response_key)  # 后端数据返回list
+
+                    print(Compared_q,Compared_h)
 
                     if Compared_q == Compared_h:
                         self.get_data.write_qh_response_result(i,'前后端接口数据一致:测试通过')
@@ -134,7 +142,7 @@ class RunMain:
                     fail_count.append(i)
 
         d_message = self.other_method.pass_fail_number(pass_count,fail_count,"单一接口自动化测试")  # 单一接口数据统计
-        c_message = self.other_method.pass_fail_number(c_pass_count, c_fail_count, "前后端接口自动化测试")  # 前后端数据接口统计
+        c_message = self.other_method.pass_fail_number(c_pass_count, c_fail_count, "前后端接口数据对比自动化测试")  # 前后端数据接口统计
 
         print(d_message)
         print(c_message)

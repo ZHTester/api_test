@@ -49,22 +49,37 @@ class DependentData:
         "执行获取header的行号"
         request_data = self.getdata.get_request_data(row_num_header)  # 拿到请求数据
         request_url = self.getdata.get_url(row_num_header)
+        request_ba = self.getdata.get_before_after(row_num)
         request_header = self.getdata.get_is_header(row_num_header)
         request_method = self.getdata.get_is_requestMethod(row_num_header)  # 拿到请求方法
+
+        if 'login/username' in request_url:
+            self.get_hea.get_qiantai_login(request_header)
 
         if 'login/submit' in request_url:
             self.get_hea.get_houtai_login(request_header, request_data)
 
-        res = run_method.run_main(request_method, url_Htai + request_url, request_data, request_header)
-        res = json.loads(res)
-        try:
-            token1 = res['data']['token']
-            uid = res['data']['userId']
-            request_header.update({'token': token1, 'uid': str(uid)})
-            return request_header,row_num
-        except:
-            self.getdata.write_result(row_num, '系统维护')
-            print('系统维护')
+        if request_ba == 'a':
+            res = run_method.run_main(request_method, url_pc + request_url, request_data, request_header)
+            res = json.loads(res)
+            try:
+                token1 = res['data']['token']
+                uid = res['data']['id']
+                request_header.update({'token': token1, 'uid': str(uid)})
+                return request_header,row_num
+            except:
+                self.getdata.write_result(row_num, '系统维护')
+                print('系统维护')
+        else:
+            res = run_method.run_main(request_method, url_Htai + request_url, request_data, request_header)
+            try:
+                token1 = res['data']['token']
+                uid = res['data']['userId']
+                request_header.update({'token': token1, 'uid': str(uid)})
+                return request_header,row_num
+            except:
+                self.getdata.write_result(row_num, '系统维护')
+                print('系统维护')
 
     def run_dependent(self):
         """
@@ -75,6 +90,7 @@ class DependentData:
         run_method  = RunMethod(self.sheetId)
         row_num = self.oper_excel.get_row_num(self.CaseId)  # 获取 casename 对应的行号
         dependCase = self.getdata.get_is_depend(row_num)  # 拿到case依赖 执行依赖
+
         request_data = self.getdata.get_request_data(row_num)  # 拿到请求数据
         request_url = self.getdata.get_url(row_num)
         request_header = self.getdata.get_is_header(row_num)

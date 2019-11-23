@@ -39,7 +39,7 @@ class  GetData:
         :param row:
         :return:
         """
-        case_Name = self.oper_excle.get_cell_value(row,int(case_name))
+        case_Name = self.oper_excle.get_cell_value(row,int(case_id))
         return case_Name
 
     def get_url(self,row):

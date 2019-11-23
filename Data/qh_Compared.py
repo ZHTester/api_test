@@ -28,8 +28,6 @@ class QianHouCompared:
         self.Cass_name = Cass_name
         self.get_data = GetData(sheetId)
 
-
-
     def run_qhInterface(self):
         """
          运行前后台关联的用例

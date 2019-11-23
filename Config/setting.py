@@ -35,18 +35,18 @@ data_depend = '8' # header 依赖返回的数据
 filed_depend = '9'  # header 数据依赖字段
 """--------------"""
 data = '10'
+dynamic_data = '11'  # 动态传入值
 """-----------request_data 依赖数据----------"""
-request_case_depend_value = '11'
-request_filed_depend_key = '12'
+request_case_depend_value = '12'
+request_filed_depend_key = '13'
 """-----------------------------------------"""
-update_data = '13' # 更新数据
-q_name_depend_key = '14'
-h_name_depend_key = '15'
-qh_result = '16'
-expect = '17'
-result = '18'
-response_result = '19'
-
+update_data = '14' # 更新数据
+q_name_depend_key = '15'
+h_name_depend_key = '16'
+qh_result = '17'
+expect = '18'
+result = '19'
+response_result = '20'
 
 # ==============-----数据库配置谷歌生成器-----===========================
 host_Mysql = '203.60.1.61'
