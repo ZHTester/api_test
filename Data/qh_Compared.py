@@ -82,6 +82,7 @@ class QianHouCompared:
             res = run_method.run_main(request_method, url_Htai + request_url, request_data, request_header)
         return json.loads(res)
 
+    """---------------前后端 单一数据返回json数据匹配----------------"""
     def run_qhInterface_key(self,depend_value):
         depend_value1 = []
         depend_data = depend_value.split(">")  # 获取json表达式
@@ -106,7 +107,6 @@ class QianHouCompared:
         if data_depend:
             for depend_i in depend_data:
                 json_exe = parse(depend_i)  # 获取对表达式
-
                 madle = json_exe.find(res1)  # 使用json_path获取数据
                 try:
                     result1 = [math.value for math in madle][0]
@@ -115,3 +115,31 @@ class QianHouCompared:
                 except IndexError as e:
                     pass
             return depend_value1
+
+    """---------------前后端 多数据返回json数据匹配----------------"""
+
+    def get_num_key(self,res,key1,key2):
+        """
+        获取整体数据列表长度
+        :param res:   response 响应结果
+        :param key1:  长度表达式
+        :param key2:  结果表达式
+        :return:  返回结果list
+        """
+        depend_value = []
+
+        expression_key = parse(key1)
+        madle = expression_key.find(res)  # 使用json_path获取数据
+        result1 = [math.value for math in madle][0]
+        result1 = len(result1)
+
+        for i in range(result1):
+            i = str(i)
+            json_exe = parse(key2.format(i))  # 获取对表达式
+            madle = json_exe.find(res)  # 使用json_path获取数据
+            r = [math.value for math in madle][0]
+            r = str(r)
+            depend_value.append(r)
+        return depend_value
+
+

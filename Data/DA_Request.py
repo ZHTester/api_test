@@ -38,7 +38,7 @@ class DependentData:
         row_data = self.oper_excel.get_row_data(self.CaseId)
         return row_data
 
-    def get_Association_case(self):
+    def get_Association_case(self,update_da):
         """第一个接口关联运行方式"""
         run_method = RunMethod(self.sheetId)
         row_num = self.oper_excel.get_row_num(self.CaseId)  # 获取 casename 对应的行号
@@ -52,6 +52,11 @@ class DependentData:
         request_ba = self.getdata.get_before_after(row_num)
         request_header = self.getdata.get_is_header(row_num_header)
         request_method = self.getdata.get_is_requestMethod(row_num_header)  # 拿到请求方法
+        if update_da is not None:
+            request_data.update(update_da)
+
+        if self.update is not None:
+            request_data.update(self.update)
 
         if 'login/username' in request_url:
             self.get_hea.get_qiantai_login(request_header)
@@ -90,16 +95,20 @@ class DependentData:
         run_method  = RunMethod(self.sheetId)
         row_num = self.oper_excel.get_row_num(self.CaseId)  # 获取 casename 对应的行号
         dependCase = self.getdata.get_is_depend(row_num)  # 拿到case依赖 执行依赖
-
         request_data = self.getdata.get_request_data(row_num)  # 拿到请求数据
         request_url = self.getdata.get_url(row_num)
         request_header = self.getdata.get_is_header(row_num)
         request_ba = self.getdata.get_before_after(row_num)
         request_method = self.getdata.get_is_requestMethod(row_num) # 拿到请求方法
+        update_da = self.getdata.get_update_data(row_num)  # 拿到更新数据
 
         if dependCase is not None:
-            AssociationH_Header = self.get_Association_case()
-            request_header = AssociationH_Header[0]
+            AssociationH_Header = self.get_Association_case(update_da)
+            try:
+                request_header = AssociationH_Header[0]
+            except:
+                self.getdata.write_qh_response_result(row_num, '系统维护')
+                print('系统维护')
 
         if self.update is not None:
             request_data.update(self.update)

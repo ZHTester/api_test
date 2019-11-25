@@ -41,9 +41,12 @@ class RunMain:
         # 单一接口统计
         pass_count = []
         fail_count = []
-        # 前后端接口统计
+        # 前后端接口统计 单一数据
         c_pass_count = []
         c_fail_count = []
+        # 前后端接口统计 单一数据
+        d_pass_count = []
+        d_fail_count = []
 
         row_line = self.get_data.get_case_lines()
         for i in range(1,row_line):
@@ -61,6 +64,12 @@ class RunMain:
                 dependCase = self.get_data.get_is_depend(i)  # 拿到case依赖 执行依赖
                 qh_response_data = self.get_data.get_qh_response_name_key(i)  # 拿到前后端需要执行的 case名称以及依赖表达式
                 qh_response_key = self.get_data.get_qh_response_key(i) # 拿到当前执行行的依赖表达式
+
+                """----------获取多数据形式------------"""
+                a_expression_n = self.get_data.get_qh_a_expression_n(i)  # a关联场景接口-表达式(长度)
+                b_expression_n = self.get_data.get_qh_b_expression_n(i)  # b本次执行场景接口-表达式(长度)
+                a_expression = self.get_data.get_qh_a_expression(i)  # 关联场景接口-表达式(数据)
+                b_expression = self.get_data.get_qh_b_expression(i)  #  本次场景接口-表达式(数据)
 
                 # ======---判断是否有依赖case---======
                 if dependCase is not None:
@@ -88,7 +97,8 @@ class RunMain:
                                 data_response_value = depend_data_Request_data.get_data_for_key(i,kn[0])  # 获取返回数据 value
                                 if data_response_value[1] is not None:
                                     data_rr_value =data_response_value[0]
-                                    request_header.update(data_response_value[2])
+                                    if data_response_value[2]['token'] == '':
+                                        request_header.update(data_response_value[2])
                                 num_a = len(data_rr_value)
                                 for num in range(num_a):
                                     request_data[depend_key_request_data[num]] = data_rr_value[num]
@@ -110,28 +120,50 @@ class RunMain:
                     res = self.run_method.run_main(request_method,url_pc+request_url,request_data,request_header)
                 else:
                     res = self.run_method.run_main(request_method, url_Htai+request_url, request_data, request_header)
-                # print(res)
-                print(request_data)
 
-                # =====-----前后端返回接口数据对比-----======
+
                 if qh_response_data is not '':
+                    # =====-----前后端返回接口数据对比 单一数据-----======
                     caseName_q = qh_response_data[0]  # 获取需要执行的用例名称
                     caseName_k = qh_response_data[1]  # 获取需要执行的用例关键字 key
                     run_depend_qh = QianHouCompared(caseName_q,self.sheetId)
 
-                    Compared_q = run_depend_qh.run_qhInterface_key(caseName_k)  # 前端数据返回list
-                    Compared_h = run_depend_qh.run_response_Interface_key(res1=res,depend_value=qh_response_key)  # 后端数据返回list
+                    d_Compared_q = run_depend_qh.run_qhInterface_key(caseName_k)  # 前端数据返回list
+                    d_Compared_h = run_depend_qh.run_response_Interface_key(res1=res,depend_value=qh_response_key)  # 后端数据返回list
 
-                    print(Compared_q,Compared_h)
+                    # print(d_Compared_q,d_Compared_h)
 
-                    if Compared_q == Compared_h:
+                    # ======---前后端返回接口数据对比单一数据 判断场景是否执行成功---======
+                    if d_Compared_q == d_Compared_h:
                         self.get_data.write_qh_response_result(i,'前后端接口数据一致:测试通过')
                         c_pass_count.append(i)
                     else:
                         self.get_data.write_qh_response_result(i, '前后端接口数据不一致:测试失败')
                         c_fail_count.append(i)
 
-                # ======---执行断言操作判断接口是否执行成功---======
+                    # =====-----场景接口前后台多数据对比逻辑-----======
+                    Compared_res = run_depend_qh.run_qhInterface()  # 返回数据
+                    a_Compared = run_depend_qh.get_num_key(res=Compared_res, key1=a_expression_n,
+                                                           key2=a_expression)  # 前关联数据
+
+                    b_Compared = run_depend_qh.get_num_key(res=json.loads(res), key1=b_expression_n,
+                                                           key2=b_expression)  # 后关联数据
+
+                    # # 多数据打印
+                    # print(a_Compared)
+                    # print('=======--------=============')
+                    # print(b_Compared)
+
+                # ======---前后端返回接口数据对比多数据 判断场景是否执行成功---======
+                    if a_Compared == b_Compared:
+                        self.get_data.write_qh_ab_result(i, '前后端接口数据一致:测试通过')
+                        d_pass_count.append(i)
+                    else:
+                        self.get_data.write_qh_ab_result(i, '前后端接口数据不一致:测试失败')
+                        d_fail_count.append(i)
+
+
+                # ======---单一接口 执行断言操作判断接口是否执行成功---======
                 if self.comm.is_contain(request_expect, res):
                     self.get_data.write_result(i, '测试通过')
                     self.get_data.write_response(i, res)  #  写入正常数据

@@ -19,12 +19,17 @@ class OtherFunction:
         发送消息
         :return:
         """
+        global pass_result, fail_result
         pass_num = float(len(pass_list))  # 百分比就是float 也就是浮点类型
         fail_num = float(len(fail_list))
         count_num = pass_num + fail_num  # 测试用例总数
         # 90%
-        pass_result = "%.2f%%" % (pass_num / count_num * 100)
-        fail_result = "%.2f%%" % (fail_num / count_num * 100)
+        try:
+            pass_result = "%.2f%%" % (pass_num / count_num * 100)
+            fail_result = "%.2f%%" % (fail_num / count_num * 100)
+        except:
+            print('含有0')
+
 
         content = ["[**********"+title+"**********]:",
                    "本次接口自动化测试总接口数量为:%s" % count_num,

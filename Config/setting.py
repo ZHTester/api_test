@@ -29,6 +29,7 @@ url = '3'
 run = '4'
 request_way = '5'  # 请求方式
 header = '6'  # header
+
 """header依赖数据"""
 case_depend = '7' # case依赖
 data_depend = '8' # header 依赖返回的数据
@@ -36,17 +37,26 @@ filed_depend = '9'  # header 数据依赖字段
 """--------------"""
 data = '10'
 dynamic_data = '11'  # 动态传入值
+
 """-----------request_data 依赖数据----------"""
 request_case_depend_value = '12'
 request_filed_depend_key = '13'
 """-----------------------------------------"""
+
 update_data = '14' # 更新数据
 q_name_depend_key = '15'
 h_name_depend_key = '16'
 qh_result = '17'
-expect = '18'
-result = '19'
-response_result = '20'
+
+qh_a_expression_n = '18'  # a关联场景接口-表达式(长度)
+qh_b_expression_n = '19' # b本次执行场景接口-表达式(长度)
+qh_a_expression = '20' # 关联场景接口-表达式(数据)
+qh_b_expression = '21' # 本次场景接口-表达式(数据)
+qh_ab_result = '22' # 前后场景多数据对比结果
+
+expect = '23'
+result = '24'
+response_result = '25'
 
 # ==============-----数据库配置谷歌生成器-----===========================
 host_Mysql = '203.60.1.61'

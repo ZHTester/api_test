@@ -203,6 +203,61 @@ class  GetData:
             return None
         else:
             return depend_data
+    """==========================取出前后台多个数据进行 前后台数据对比=================================="""
+    def get_qh_a_expression_n(self,row):
+        """
+        a关联场景接口-表达式(长度)
+        :param row:
+        :return:
+        """
+        aexpression_n = self.oper_excle.get_cell_value(row,int(qh_a_expression_n))
+        if aexpression_n == '':
+            return None
+        return aexpression_n
+
+    def get_qh_b_expression_n(self,row):
+        """
+        b本次执行场景接口-表达式(长度)
+        :param row:
+        :return:
+        """
+        bexpression_n = self.oper_excle.get_cell_value(row,int(qh_b_expression_n))
+        if bexpression_n == '':
+            return None
+        return bexpression_n
+
+    def get_qh_a_expression(self,row):
+        """
+        关联场景接口-表达式(数据)
+        :param row:
+        :return:
+        """
+        aexpression = self.oper_excle.get_cell_value(row,int(qh_a_expression))
+        if aexpression == '':
+            return None
+        return aexpression
+
+    def get_qh_b_expression(self,row):
+        """
+        本次场景接口-表达式(数据)
+        :param row:
+        :return:
+        """
+        bexpression = self.oper_excle.get_cell_value(row,int(qh_b_expression))
+        if bexpression == '':
+            return None
+        return bexpression
+
+    def write_qh_ab_result(self,row, value):
+        """
+        多个数据结果写入
+        :param value:
+        :param row:
+        :return:
+        """
+        self.oper_excle.write_value(row, int(qh_ab_result), value)
+
+    """---------------------------------------------------------------"""
 
     def get_expected_data(self,row):
         """
