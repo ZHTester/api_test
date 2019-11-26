@@ -89,14 +89,16 @@ class QianHouCompared:
         if data_depend:
             response_data = self.run_qhInterface()
             for depend_i in depend_data:
-                json_exe = parse(depend_i)  # 获取对表达式
-                madle = json_exe.find(response_data)  # 使用json_path获取数据
                 try:
+                    json_exe = parse(depend_i)  # 获取对表达式
+                    madle = json_exe.find(response_data)  # 使用json_path获取数据
                     result1 = [math.value for math in madle][0]
                     result1 = str(result1)
                     depend_value1.append(result1)
                 except IndexError as e:
-                    pass
+                    print('--------数组越界-------------',e)
+                except KeyError as e:
+                    print('--------表达式错误-----------',e)
             return depend_value1
 
     @staticmethod
@@ -127,19 +129,21 @@ class QianHouCompared:
         :return:  返回结果list
         """
         depend_value = []
+        try:
+            expression_key = parse(key1)
+            madle = expression_key.find(res)  # 使用json_path获取数据
+            result1 = [math.value for math in madle][0]
+            result1 = len(result1)
 
-        expression_key = parse(key1)
-        madle = expression_key.find(res)  # 使用json_path获取数据
-        result1 = [math.value for math in madle][0]
-        result1 = len(result1)
-
-        for i in range(result1):
-            i = str(i)
-            json_exe = parse(key2.format(i))  # 获取对表达式
-            madle = json_exe.find(res)  # 使用json_path获取数据
-            r = [math.value for math in madle][0]
-            r = str(r)
-            depend_value.append(r)
-        return depend_value
+            for i in range(result1):
+                i = str(i)
+                json_exe = parse(key2.format(i))  # 获取对表达式
+                madle = json_exe.find(res)  # 使用json_path获取数据
+                r = [math.value for math in madle][0]
+                r = str(r)
+                depend_value.append(r)
+            return depend_value
+        except:
+            print('========多数据对比场景-表达式错误=======')
 
 

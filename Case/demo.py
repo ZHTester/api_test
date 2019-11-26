@@ -79,3 +79,8 @@ for i in range(len(a)):
   madle = json_exe.find(demo)  # 使用json_path获取数据
   result1 = [math.value for math in madle][0]
   print(result1)
+
+demo1 = ['0.0']
+demo2 =['0.0']
+
+print(demo1==demo2)

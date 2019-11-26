@@ -38,7 +38,7 @@ class DependentData:
         row_data = self.oper_excel.get_row_data(self.CaseId)
         return row_data
 
-    def get_Association_case(self,update_da):
+    def get_Association_case(self,update_da=None):
         """第一个接口关联运行方式"""
         run_method = RunMethod(self.sheetId)
         row_num = self.oper_excel.get_row_num(self.CaseId)  # 获取 casename 对应的行号
@@ -72,19 +72,20 @@ class DependentData:
                 uid = res['data']['id']
                 request_header.update({'token': token1, 'uid': str(uid)})
                 return request_header,row_num
-            except:
+            except Exception as e:
                 self.getdata.write_result(row_num, '系统维护')
-                print('系统维护')
+                print('====a系统维护=====错误信息>{0}===错误行>{1}'.format(e,row_num))
         else:
             res = run_method.run_main(request_method, url_Htai + request_url, request_data, request_header)
+            res = json.loads(res)
             try:
                 token1 = res['data']['token']
                 uid = res['data']['userId']
                 request_header.update({'token': token1, 'uid': str(uid)})
                 return request_header,row_num
-            except:
+            except Exception as e:
                 self.getdata.write_result(row_num, '系统维护')
-                print('系统维护')
+                print('===b系统维护=====错误信息>{0}===错误行>{1}'.format(e,row_num))
 
     def run_dependent(self):
         """
@@ -103,12 +104,16 @@ class DependentData:
         update_da = self.getdata.get_update_data(row_num)  # 拿到更新数据
 
         if dependCase is not None:
-            AssociationH_Header = self.get_Association_case(update_da)
+            if update_da is not None:
+                AssociationH_Header = self.get_Association_case(update_da)
+            else:
+                AssociationH_Header = self.get_Association_case()
+
             try:
                 request_header = AssociationH_Header[0]
-            except:
+            except Exception as e:
                 self.getdata.write_qh_response_result(row_num, '系统维护')
-                print('系统维护')
+                print('====系统维护=====错误信息>{0}===错误行>{1}'.format(e,row_num))
 
         if self.update is not None:
             request_data.update(self.update)
@@ -123,11 +128,13 @@ class DependentData:
             res = run_method.run_main(request_method, url_pc + request_url, request_data, request_header)
         else:
             res = run_method.run_main(request_method, url_Htai + request_url, request_data, request_header)
-
-        if AssociationH_Header[1] is not None:
-            return json.loads(res),AssociationH_Header[1],request_header
-        else:
-            return json.loads(res)
+        try:
+            if AssociationH_Header[1] is not None:
+                return json.loads(res),AssociationH_Header[1],request_header
+            else:
+                return json.loads(res)
+        except Exception as e:
+            print('====系统维护=====错误信息>{0}===错误行>{1}'.format(e,row_num))
 
 
     def get_data_for_key(self,row,num_dk):
@@ -147,17 +154,20 @@ class DependentData:
                     depend_data  = kn[1].split(">") # 分隔符可以填入多个表达式
                     response_data = self.run_dependent()
                     for depend_i in depend_data:
-                        json_exe = parse(depend_i)  # 获取对表达式
-                        if response_data[1] is not None:
-                            madle = json_exe.find(response_data[0])  # 使用json_path获取数据
-                        else:
-                            madle = json_exe.find(response_data)
                         try:
+                            json_exe = parse(depend_i)  # 获取对表达式
+                            if response_data[1] is not None:
+                                madle = json_exe.find(response_data[0])  # 使用json_path获取数据
+                            else:
+                                madle = json_exe.find(response_data)
+
                             result1 = [math.value for math in madle][0]
                             result1 = str(result1)
                             depend_value.append(result1)
                         except IndexError as e:
                             pass
+                        except TypeError as e:
+                            print('====系统维护=====错误信息>{0}===错误行>{1}'.format(e,row))
                     if response_data[1] is not None:
                         return depend_value,response_data[1],response_data[2]
                     else:
