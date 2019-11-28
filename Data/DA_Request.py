@@ -115,11 +115,10 @@ class DependentData:
                 self.getdata.write_qh_response_result(row_num, '系统维护')
                 print('====系统维护=====错误信息>{0}===错误行>{1}'.format(e,row_num))
 
-        if self.update is not None:
-            request_data.update(self.update)
-
         if 'login/username' in request_url:
             self.get_hea.get_qiantai_login(request_header)
+            if self.update is not None:
+                request_data.update(self.update)
 
         if 'login/submit' in request_url:
             self.get_hea.get_houtai_login(request_header, request_data)
@@ -129,13 +128,13 @@ class DependentData:
         else:
             res = run_method.run_main(request_method, url_Htai + request_url, request_data, request_header)
         try:
-            if AssociationH_Header[1] is not None:
-                return json.loads(res),AssociationH_Header[1],request_header
+            if dependCase is not None:
+                if AssociationH_Header[1]:
+                    return json.loads(res),AssociationH_Header[1],request_header
             else:
-                return json.loads(res)
+                return res
         except Exception as e:
             print('====系统维护=====错误信息>{0}===错误行>{1}'.format(e,row_num))
-
 
     def get_data_for_key(self,row,num_dk):
         """
@@ -156,11 +155,10 @@ class DependentData:
                     for depend_i in depend_data:
                         try:
                             json_exe = parse(depend_i)  # 获取对表达式
-                            if response_data[1] is not None:
+                            if type(response_data) is  list:
                                 madle = json_exe.find(response_data[0])  # 使用json_path获取数据
                             else:
                                 madle = json_exe.find(response_data)
-
                             result1 = [math.value for math in madle][0]
                             result1 = str(result1)
                             depend_value.append(result1)
@@ -168,7 +166,7 @@ class DependentData:
                             pass
                         except TypeError as e:
                             print('====系统维护=====错误信息>{0}===错误行>{1}'.format(e,row))
-                    if response_data[1] is not None:
+                    if type(response_data) is  list:
                         return depend_value,response_data[1],response_data[2]
                     else:
                         return depend_value

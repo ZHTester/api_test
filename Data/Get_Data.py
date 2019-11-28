@@ -7,6 +7,7 @@
 # @Software: PyCharm
 """
 import datetime
+import os
 
 from Until.Opertion_Excle import OperExcel
 from Config.setting import *
@@ -170,7 +171,10 @@ class  GetData:
         """
         request_data = self.oper_excle.get_cell_value(row,int(data))
 
-        if request_data is not '':
+        if request_data is not '' and request_data == '../Config/test.jpg':
+            request_data = {'file': open(request_data, 'rb')}
+            return request_data
+        elif request_data is not '':
             request_data = eval(request_data)
             return request_data
         return  None

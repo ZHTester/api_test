@@ -29,7 +29,6 @@ url = '3'
 run = '4'
 request_way = '5'  # 请求方式
 header = '6'  # header
-
 """header依赖数据"""
 case_depend = '7' # case依赖
 data_depend = '8' # header 依赖返回的数据
@@ -37,12 +36,10 @@ filed_depend = '9'  # header 数据依赖字段
 """--------------"""
 data = '10'
 dynamic_data = '11'  # 动态传入值
-
 """-----------request_data 依赖数据----------"""
 request_case_depend_value = '12'
 request_filed_depend_key = '13'
 """-----------------------------------------"""
-
 update_data = '14' # 更新数据
 q_name_depend_key = '15'
 h_name_depend_key = '16'

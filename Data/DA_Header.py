@@ -52,11 +52,10 @@ class DependentDataHeader:
         request_method = self.getdata.get_is_requestMethod(row_num) # 拿到请求方法
         request_ba = self.getdata.get_before_after(row_num)
 
-        if self.update is not None:
-            request_data.update(self.update)
-
         if 'login/username' in request_url:
             self.get_hea.get_qiantai_login(request_header)
+            if self.update is not None:
+                request_data.update(self.update)
 
         if 'login/submit' in request_url:
             self.get_hea.get_houtai_login(request_header, request_data)
@@ -66,7 +65,6 @@ class DependentDataHeader:
             res = run_method.run_main(request_method, url_pc + request_url, request_data, request_header)
         else:
             res = run_method.run_main(request_method, url_Htai + request_url, request_data, request_header)
-
         return json.loads(res),request_header
 
     def get_data_for_key(self,row,num_dk):

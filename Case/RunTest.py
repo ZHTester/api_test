@@ -64,7 +64,6 @@ class RunMain:
                 dependCase = self.get_data.get_is_depend(i)  # 拿到case依赖 执行依赖
                 qh_response_data = self.get_data.get_qh_response_name_key(i)  # 拿到前后端需要执行的 case名称以及依赖表达式
                 qh_response_key = self.get_data.get_qh_response_key(i) # 拿到当前执行行的依赖表达式
-
                 """----------获取多数据形式------------"""
                 a_expression_n = self.get_data.get_qh_a_expression_n(i)  # a关联场景接口-表达式(长度)
                 b_expression_n = self.get_data.get_qh_b_expression_n(i)  # b本次执行场景接口-表达式(长度)
@@ -78,7 +77,6 @@ class RunMain:
                         for caseN in dc:
                             kn = caseN.split('-')[0]
                             c_name = caseN.split('-')[1]
-
                             if kn[0] == '1':  # header - 依赖
                                 depend_data_header = DependentDataHeader(c_name, self.sheetId,
                                                                          update_da)  # 初始化数据关联类 header
@@ -88,26 +86,33 @@ class RunMain:
                                 num_a = len(data_r_value)
                                 for num in range(num_a):
                                     request_header[depend_key_header[num]] = data_r_value[num]
-                                    request_header.update(data_response_value[1])
+                                request_header.update(data_response_value[1])
 
                             if kn[0] == '2':  # 多个依赖 request_data依赖
                                 depend_data_Request_data = DependentData(c_name, self.sheetId,
                                                                          update_da)  # 初始化数据关联类 requestData
                                 depend_key_request_data = self.get_data.get_request_case_depend_key(i, kn[0])  # key
                                 data_response_value = depend_data_Request_data.get_data_for_key(i,kn[0])  # 获取返回数据 value
-                                if data_response_value[1] is not None:
-                                    data_rr_value =data_response_value[0]
-                                    if dc[0].split('-')[0] == '1':
-                                        if data_response_value[2]['token'] == '':
+                                if len(data_response_value) > 1:
+                                    if data_response_value[1] is not None:
+                                        data_rr_value =data_response_value[0]
+                                        if dc[0].split('-')[0] == '1':
+                                            if data_response_value[2]['token'] == '':
+                                                request_header.update(data_response_value[2])
+                                        else:
                                             request_header.update(data_response_value[2])
-                                    else:
-                                        request_header.update(data_response_value[2])
-                                num_a = len(data_rr_value)
-                                for num in range(num_a):
-                                    request_data[depend_key_request_data[num]] = data_rr_value[num]
-                    except TypeError as e:
-                        print('====系统维护==RunTest===错误信息>{0}===错误行>{1}'.format(e,i))
+                                    num_a = len(data_rr_value)
+                                    for num in range(num_a):
+                                        request_data[depend_key_request_data[num]] = data_rr_value[num]
+                                else:
+                                    num_a = len(data_response_value)
+                                    for num in range(num_a):
+                                        request_data[depend_key_request_data[num]] = data_response_value[num]
 
+                    except TypeError as e:
+                        print('====系统维护==RunTest=1==错误信息>{0}===错误行>{1}'.format(e,i))
+                    except IndexError as e:
+                        print('====系统维护==RunTest=2==错误信息>{0}===错误行>{1}'.format(e,i))
                     except Exception as e:
                         self.get_data.write_result(i, '测试失败')
                         self.get_data.write_response(i, "依赖数据错误或返回数据错误---错误信息:%s---" % str(e))
@@ -118,6 +123,17 @@ class RunMain:
 
                 if 'login/submit' in request_url:
                     self.get_hea.get_houtai_login(request_header,request_data)
+
+
+                if 'recharge/do/submit' in request_url:
+                    uid = request_header['uid']
+                    token = request_header['token']
+                    device_id = request_header['device-id']
+                    os_type = request_header['os-type']
+                    timestamp = request_header['timestamp']
+                    dic_submit = {"uid":uid,"token":token,"device-id": device_id,"os-type": os_type,"timestamp": timestamp}
+                    request_data.update(dic_submit)
+
 
                 # ========---单一接口执行接口测试请求---===========
                 print('----------------------{0}-----------------'.format(caseNme))
@@ -137,6 +153,7 @@ class RunMain:
                     d_Compared_q = run_depend_qh.run_qhInterface_key(caseName_k)  # 前端数据返回list
                     d_Compared_h = run_depend_qh.run_response_Interface_key(res1=res,depend_value=qh_response_key)  # 后端数据返回list
 
+                    print(d_Compared_q,d_Compared_h)
                     # ======---前后端返回接口数据对比单一数据 判断场景是否执行成功---======
                     if d_Compared_q == d_Compared_h:
                         self.get_data.write_qh_response_result(i,'前后端接口数据一致:测试通过')
@@ -144,7 +161,6 @@ class RunMain:
                     else:
                         self.get_data.write_qh_response_result(i, '前后端接口数据不一致:测试失败')
                         c_fail_count.append(i)
-                    print(d_Compared_q,d_Compared_h)
 
                     # =====-----场景接口前后台多数据对比逻辑-----======
                     if a_expression_n:
@@ -154,10 +170,10 @@ class RunMain:
                         b_Compared = run_depend_qh.get_num_key(res=json.loads(res), key1=b_expression_n,
                                                                key2=b_expression)  # 后关联数据
 
-                        # 多数据打印
-                        print(a_Compared)
-                        print('=======--------=============')
-                        print(b_Compared)
+                        # # 多数据打印
+                        # print(a_Compared)
+                        # print('=======--------=============')
+                        # print(b_Compared)
 
                     # ======---前后端返回接口数据对比多数据 判断场景是否执行成功---======
                         if a_Compared == b_Compared:
@@ -193,14 +209,6 @@ class RunMain:
 if __name__ == "__main__":
     r = RunMain(0)
     r.go_run()
-
-
-
-
-
-
-
-
 
 
 

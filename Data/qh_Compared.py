@@ -50,10 +50,10 @@ class QianHouCompared:
                 for caseN in dc:
                     kn = caseN.split('-')[0]
                     c_name = caseN.split('-')[1]
-                    depend_data_header = DependentDataHeader(c_name, self.sheetId, update_da)  # 初始化数据关联类 header
-                    depend_data_Request_data = DependentData(c_name, self.sheetId,update_da)  # 初始化数据关联类 requestData
 
                     if kn[0] == '1':  # header - 依赖
+                        depend_data_header = DependentDataHeader(c_name, self.sheetId,
+                                                                 update_da)  # 初始化数据关联类 header
                         depend_key_header = self.get_data.get_depend_field(row_num, kn[0])  # key
                         data_response_value = depend_data_header.get_data_for_key(row_num, kn[0])  # 获取返回数据 value
                         data_r_value = data_response_value[0]
@@ -63,14 +63,31 @@ class QianHouCompared:
                             request_header.update(data_response_value[1])
 
                     if kn[0] == '2':  # 多个依赖 request_data依赖
+
+                        depend_data_Request_data = DependentData(c_name, self.sheetId,
+                                                                 update_da)  # 初始化数据关联类 requestData
                         depend_key_request_data = self.get_data.get_request_case_depend_key(row_num, kn[0])  # key
                         data_response_value = depend_data_Request_data.get_data_for_key(row_num, kn[0])  # 获取返回数据 value
-                        if data_response_value[1] is not None:
-                            data_rr_value = data_response_value[0]
-                            request_header.update(data_response_value[2])
-                        num_a = len(data_rr_value)
-                        for num in range(num_a):
-                            request_data[depend_key_request_data[num]] = data_rr_value[num]
+                        if len(data_response_value) > 1:
+                            if data_response_value[1] is not None:
+                                data_rr_value = data_response_value[0]
+                                if dc[0].split('-')[0] == '1':
+                                    if data_response_value[2]['token'] == '':
+                                        request_header.update(data_response_value[2])
+                                else:
+                                    request_header.update(data_response_value[2])
+                            num_a = len(data_rr_value)
+                            for num in range(num_a):
+                                request_data[depend_key_request_data[num]] = data_rr_value[num]
+                        else:
+                            num_a = len(data_response_value)
+                            for num in range(num_a):
+                                request_data[depend_key_request_data[num]] = data_response_value[num]
+
+            except TypeError as e:
+                print('====系统维护==RunTest=1==错误信息>{0}===错误行>{1}'.format(e, row_num))
+            except IndexError as e:
+                print('====系统维护==RunTest=2==错误信息>{0}===错误行>{1}'.format(e, row_num))
             except Exception as e:
                 self.get_data.write_result(row_num, '测试失败')
                 self.get_data.write_response(row_num, "依赖数据错误或返回数据错误---错误信息:%s---" % str(e))
@@ -96,7 +113,7 @@ class QianHouCompared:
                     result1 = str(result1)
                     depend_value1.append(result1)
                 except IndexError as e:
-                    print('--------数组越界-------------',e)
+                    print('--------数组越界----错误信息--{0}----错误表达式-{1}--'.format(e,depend_i))
                 except KeyError as e:
                     print('--------表达式错误-----------',e)
             return depend_value1
@@ -109,13 +126,15 @@ class QianHouCompared:
         if data_depend:
             for depend_i in depend_data:
                 json_exe = parse(depend_i)  # 获取对表达式
-                madle = json_exe.find(res1)  # 使用json_path获取数据
                 try:
+                    madle = json_exe.find(res1)  # 使用json_path获取数据
                     result1 = [math.value for math in madle][0]
                     result1 = str(result1)
                     depend_value1.append(result1)
                 except IndexError as e:
                     pass
+                except TypeError as  e:
+                    print('======--场景数据--====系统维护',depend_i,)
             return depend_value1
 
     """---------------前后端 多数据返回json数据匹配----------------"""

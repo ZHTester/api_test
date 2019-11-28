@@ -56,15 +56,33 @@ class RunMethod:
         i = self.get_row()
         try:
             if header is not None:
-                res = self.r.get(url=url,data=data,headers=header,timeout=10).json()
+                res = requests.get(url=url,params=data,headers=header).text
             else:
-                res = self.r.get(url=url,data=data,timeout=10).json()
+                res = requests.get(url=url,params=data,timeout=10).text
+            return res
+        except Exception as e:
+            self.get_data.write_result(i, '测试失败')
+            print(e)
+            self.get_data.write_response(i, "====---错误信息---{0}====".format(e))  # 写入错误数据
+
+    def post_file(self,url,data,header=None):
+        """
+        post 请求方法
+        :param url:
+        :param data:
+        :param header:
+        :return:
+        """
+        i = self.get_row()
+        try:
+            if header is not None:
+                res = requests.post(url=url,files=data,headers=header).text
+            else:
+                res = requests.post(url=url,files=data).text
             return res
         except Exception as e:
             self.get_data.write_result(i, '测试失败')
             self.get_data.write_response(i, "====---错误信息---{0}====".format(e))  # 写入错误数据
-
-
 
     def run_main(self,method,url,data=None,header=None):
         """
@@ -80,7 +98,10 @@ class RunMethod:
         if method == 'post':
             res  = self.post_main(url,data,header)
         elif method == 'get':
-            res = self.get_main(url,data,header)
+            res = self.get_main(url,data,header,)
+            return res
+        elif method == 'file':
+            res = self.post_file(url,data,header)
         else:
             print("=====================----不好意思该方法不存在----===========================")
 
