@@ -109,7 +109,7 @@ class  GetData:
         else:
             return depend_key
 
-    def get_depend_field(self,row,k_num):
+    def get_depend_field(self,row,k_num,):
         """
         获取数据依赖字段  =====--数据依赖字段---==== 10
         :param k_num:
@@ -190,23 +190,32 @@ class  GetData:
             return None
         else:
             return depend_key
-
-    def get_request_case_depend_key(self,row,k_num):
+    def get_request_case_depend_key(self,row,k_num,name_index):
         """
         request_data 获取依赖数据的表达式
+        :param name_index:
         :param k_num:
         :param row:
         :return: 1-token>uid   <2-goodsId
         """
         depend_data = self.oper_excle.get_cell_value(row, int(request_filed_depend_key)).split("<")
-        for key_num in depend_data:
-            kn = key_num.split('-')
+        if len(depend_data)>1:
+            kn = depend_data[name_index].split('-')
             if kn[0] == k_num:
                 depend_data = kn[1].split(">")
-        if depend_data == '':
-            return None
+                if depend_data == '':
+                    return None
+                else:
+                    return depend_data
         else:
-            return depend_data
+            for key_num in depend_data:
+                kn = key_num.split('-')
+                if kn[0] == k_num:
+                    depend_data = kn[1].split(">")
+            if depend_data == '':
+                return None
+            else:
+                return depend_data
     """==========================取出前后台多个数据进行 前后台数据对比=================================="""
     def get_qh_a_expression_n(self,row):
         """

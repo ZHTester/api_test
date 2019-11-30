@@ -52,7 +52,9 @@ class DependentData:
         request_ba = self.getdata.get_before_after(row_num)
         request_header = self.getdata.get_is_header(row_num_header)
         request_method = self.getdata.get_is_requestMethod(row_num_header)  # 拿到请求方法
+
         if update_da is not None:
+            print(update_da, row_num)
             request_data.update(update_da)
 
         if self.update is not None:
@@ -132,13 +134,14 @@ class DependentData:
                 if AssociationH_Header[1]:
                     return json.loads(res),AssociationH_Header[1],request_header
             else:
-                return res
+                return json.loads(res)
         except Exception as e:
             print('====系统维护=====错误信息>{0}===错误行>{1}'.format(e,row_num))
 
-    def get_data_for_key(self,row,num_dk):
+    def get_data_for_key(self,row,num_dk,name_index):
         """
         根据依赖的key 执行依赖的case想要返回后通过 json_path 提取出对应的数据
+        :param name_index:
         :param num_dk:
         :param row:
         :return:
@@ -146,16 +149,16 @@ class DependentData:
         global result1,depend_value
         depend_value = [] # 从返回的json提取出来的值
         depend_data = self.getdata.get_request_case_depend_value(row).split("<")  # 获取json表达式
-        if depend_data:
-            for key_num in depend_data:
-                kn = key_num.split('-')
+        if len(depend_data)>1:
+            if depend_data:
+                kn = depend_data[name_index].split('-')
                 if kn[0] == num_dk:
                     depend_data  = kn[1].split(">") # 分隔符可以填入多个表达式
                     response_data = self.run_dependent()
                     for depend_i in depend_data:
                         try:
                             json_exe = parse(depend_i)  # 获取对表达式
-                            if type(response_data) is  list:
+                            if type(response_data) is  tuple:
                                 madle = json_exe.find(response_data[0])  # 使用json_path获取数据
                             else:
                                 madle = json_exe.find(response_data)
@@ -166,9 +169,34 @@ class DependentData:
                             pass
                         except TypeError as e:
                             print('====系统维护=====错误信息>{0}===错误行>{1}'.format(e,row))
-                    if type(response_data) is  list:
+                    if type(response_data) is  tuple:
                         return depend_value,response_data[1],response_data[2]
                     else:
                         return depend_value
+        else:
+            if depend_data:
+                for key_num in depend_data:
+                    kn = key_num.split('-')
+                    if kn[0] == num_dk:
+                        depend_data  = kn[1].split(">") # 分隔符可以填入多个表达式
+                        response_data = self.run_dependent()
+                        for depend_i in depend_data:
+                            try:
+                                json_exe = parse(depend_i)  # 获取对表达式
+                                if type(response_data) is  tuple:
+                                    madle = json_exe.find(response_data[0])  # 使用json_path获取数据
+                                else:
+                                    madle = json_exe.find(response_data)
+                                result1 = [math.value for math in madle][0]
+                                result1 = str(result1)
+                                depend_value.append(result1)
+                            except IndexError as e:
+                                pass
+                            except TypeError as e:
+                                print('====系统维护=====错误信息>{0}===错误行>{1}'.format(e,row))
+                        if type(response_data) is  tuple:
+                            return depend_value,response_data[1],response_data[2]
+                        else:
+                            return depend_value
 
 

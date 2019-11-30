@@ -73,10 +73,14 @@ class RunMain:
                 # ======---判断是否有依赖case---======
                 if dependCase is not None:
                     try:
+                        c_name_index = []
                         dc = dependCase.split('<')
                         for caseN in dc:
                             kn = caseN.split('-')[0]
                             c_name = caseN.split('-')[1]
+                            c_name_index.append(c_name)
+                            name_index = c_name_index.index(c_name)
+
                             if kn[0] == '1':  # header - 依赖
                                 depend_data_header = DependentDataHeader(c_name, self.sheetId,
                                                                          update_da)  # 初始化数据关联类 header
@@ -91,8 +95,8 @@ class RunMain:
                             if kn[0] == '2':  # 多个依赖 request_data依赖
                                 depend_data_Request_data = DependentData(c_name, self.sheetId,
                                                                          update_da)  # 初始化数据关联类 requestData
-                                depend_key_request_data = self.get_data.get_request_case_depend_key(i, kn[0])  # key
-                                data_response_value = depend_data_Request_data.get_data_for_key(i,kn[0])  # 获取返回数据 value
+                                depend_key_request_data = self.get_data.get_request_case_depend_key(i, kn[0],name_index)  # key
+                                data_response_value = depend_data_Request_data.get_data_for_key(i,kn[0],name_index)  # 获取返回数据 value
                                 if len(data_response_value) > 1:
                                     if data_response_value[1] is not None:
                                         data_rr_value =data_response_value[0]
@@ -134,7 +138,6 @@ class RunMain:
                     dic_submit = {"uid":uid,"token":token,"device-id": device_id,"os-type": os_type,"timestamp": timestamp}
                     request_data.update(dic_submit)
 
-
                 # ========---单一接口执行接口测试请求---===========
                 print('----------------------{0}-----------------'.format(caseNme))
                 self.get_data.write_response(i, '')
@@ -143,16 +146,15 @@ class RunMain:
                 else:
                     res = self.run_method.run_main(request_method, url_Htai+request_url, request_data, request_header)
                 print(res)
+                print(request_data)
 
                 if qh_response_data is not '':
                     # =====-----前后端返回接口数据对比 单一数据-----======
                     caseName_q = qh_response_data[0]  # 获取需要执行的用例名称
                     caseName_k = qh_response_data[1]  # 获取需要执行的用例关键字 key
                     run_depend_qh = QianHouCompared(caseName_q,self.sheetId)
-
                     d_Compared_q = run_depend_qh.run_qhInterface_key(caseName_k)  # 前端数据返回list
                     d_Compared_h = run_depend_qh.run_response_Interface_key(res1=res,depend_value=qh_response_key)  # 后端数据返回list
-
                     print(d_Compared_q,d_Compared_h)
                     # ======---前后端返回接口数据对比单一数据 判断场景是否执行成功---======
                     if d_Compared_q == d_Compared_h:

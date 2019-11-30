@@ -56,9 +56,9 @@ class RunMethod:
         i = self.get_row()
         try:
             if header is not None:
-                res = requests.get(url=url,params=data,headers=header).text
+                res = requests.get(url=url,params=data,headers=header,timeout=20).text
             else:
-                res = requests.get(url=url,params=data,timeout=10).text
+                res = requests.get(url=url,params=data,timeout=20).text
             return res
         except Exception as e:
             self.get_data.write_result(i, '测试失败')
@@ -76,9 +76,9 @@ class RunMethod:
         i = self.get_row()
         try:
             if header is not None:
-                res = requests.post(url=url,files=data,headers=header).text
+                res = requests.post(url=url,files=data,headers=header,timeout=20).text
             else:
-                res = requests.post(url=url,files=data).text
+                res = requests.post(url=url,files=data,timeout=20).text
             return res
         except Exception as e:
             self.get_data.write_result(i, '测试失败')
@@ -102,6 +102,7 @@ class RunMethod:
             return res
         elif method == 'file':
             res = self.post_file(url,data,header)
+            return res
         else:
             print("=====================----不好意思该方法不存在----===========================")
 
