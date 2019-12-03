@@ -1,24 +1,4 @@
-from bs4 import BeautifulSoup
-demo = """
-<html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'></head><body>
-<form id='payform' name='payform' action='https://www.aa168zf.com/Pay_Index.html' method='post'>
-<input type='hidden' name='pay_callbackurl' value='http://www.aalgds.com/api/gl/recharge/notify/1673'/>
-<input type='hidden' name='pay_bankcode' value='1092'/><input type='hidden' name='pay_md5sign' 
-value='818E76321CF089CB8C59A83B7C13B039'/><input type='hidden' name='pay_notifyurl' value=
-'http://www.aalgds.com/api/gl/recharge/notify/1673'/><input type='hidden' name='pay_orderid' 
-value='CZ201911301853DVYQZG'/><input type='hidden' name='pay_productname' value='CZ'/>
-<input type='hidden' name='pay_amount' value='2000.00'/><input type='hidden' name='pay_memberid' 
-value='普通商户'/><input type='hidden' name='pay_applydate' value='2019-11-30 18:53:02'/></form>
-<script>document.getElementById('payform').submit();</script></body></html>
-"""
-
-soup = BeautifulSoup(demo)
-inputStr =soup.find_all(attrs={"name":"pay_orderid"})
-order_id=(inputStr[0]['value'])
-print(order_id)
-
-
-demo02 = {
+demo  = {
   "code": 1,
   "data": {
     "amountTotal": 986879273.35,

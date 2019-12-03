@@ -44,6 +44,7 @@ class DependentDataHeader:
         运行依赖的caseID case request 请求
         :return:
         """
+        global res
         run_method  = RunMethod(self.sheetId)
         row_num = self.oper_excel.get_row_num(self.CaseId)  # 获取 casename 对应的行号
         request_data = self.getdata.get_request_data(row_num)  # 拿到请求数据
@@ -62,8 +63,10 @@ class DependentDataHeader:
 
         if request_ba == 'a':
             res = run_method.run_main(request_method, url_pc + request_url, request_data, request_header)
-        else:
+        elif request_ba == 'b':
             res = run_method.run_main(request_method, url_Htai + request_url, request_data, request_header)
+        elif request_ba == 'c':
+            res = run_method.run_main(request_method, url_xht + request_url, request_data, request_header)
         return json.loads(res),request_header
 
     def get_data_for_key(self,row,num_dk):

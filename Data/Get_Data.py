@@ -196,7 +196,6 @@ class  GetData:
         :param row:
         :return:
         """
-        print('-----------------=========================----------------------',row)
         depend_key = self.oper_excle.get_cell_value(row, int(request_case_depend_value))
         if depend_key == "":
             return None
@@ -290,7 +289,7 @@ class  GetData:
         :param row:
         :return:
         """
-        expect_data = self.oper_excle.get_cell_value(row,int(expect))
+        expect_data = self.oper_excle.get_cell_value(row,int(expect)).split(',')
         if expect_data == '':
             return None
         return expect_data

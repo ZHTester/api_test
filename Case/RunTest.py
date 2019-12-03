@@ -149,6 +149,10 @@ class RunMain:
                     excute_method = getattr(getattr_method, dt_data)
                     excute_method()
 
+                    dt_data = excute_method()
+                    request_data.update()
+
+
                 if request_ba  == 'a':
                     res = self.run_method.run_main(request_method,url_pc+request_url,request_data,request_header)
                 elif request_ba == 'b':
@@ -185,8 +189,8 @@ class RunMain:
                                                                key2=b_expression)  # 后关联数据
                         # # 多数据打印
                         # print(a_Compared)
-                        # print('=======--------=============')
-                        # print(b_Compared)
+                        #                         # print('=======--------=============')
+                        #                         # print(b_Compared)
 
                     # ======---前后端返回接口数据对比多数据 判断场景是否执行成功---======
                         if a_Compared == b_Compared:
@@ -197,7 +201,7 @@ class RunMain:
                             d_fail_count.append(i)
 
                 # ======---单一接口 执行断言操作判断接口是否执行成功---======
-                if self.comm.is_contain(request_expect, res):
+                if self.comm.is_contain(request_expect[0], request_expect[1],res):
                     self.get_data.write_result(i, '测试通过')
                     self.get_data.write_response(i, res)  #  写入正常数据
                     pass_count.append(i)

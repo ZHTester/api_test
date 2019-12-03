@@ -9,18 +9,31 @@
 动态生成值  方法反射
 
 """
+import datetime
 import time
 
 
 class ActionData:
-    def ftime(self,*args):
-        pass
+    @staticmethod
+    def ftime_three(*args):
+        now = datetime.datetime.now()
+        tmp = now + datetime.timedelta(days=-2)
+        startDate = tmp.strftime("%Y-%m-%d") + " 00:00:00"
+        return startDate
 
-    def etime(self,*args):
-        pass
+    @staticmethod
+    def etime_now(*args):
+        now = datetime.datetime.now()
+        endDate = now.strftime("%Y-%m-%d") + " 00:00:00"
+        return endDate
 
     @staticmethod
     def time_sleep(*args):
         time.sleep(3)
+
+if __name__ == "__main__":
+   a =  ActionData()
+   a.ftime_three()
+   a.etime_now()
 
 
