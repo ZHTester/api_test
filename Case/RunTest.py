@@ -9,7 +9,6 @@
 case执行主函数类
 """
 import json
-import time
 
 from Data.Get_Data import GetData
 from Base.Opertion_Interface import RunMethod
@@ -22,6 +21,7 @@ from Until.Get_Header import GetHeader
 from Base.Action_Interface import MethodInterface
 from Until.Other_Function import OtherFunction
 from Config.setting import *
+from Base.Action_data import ActionData
 
 
 class RunMain:
@@ -64,6 +64,7 @@ class RunMain:
                 dependCase = self.get_data.get_is_depend(i)  # 拿到case依赖 执行依赖
                 qh_response_data = self.get_data.get_qh_response_name_key(i)  # 拿到前后端需要执行的 case名称以及依赖表达式
                 qh_response_key = self.get_data.get_qh_response_key(i) # 拿到当前执行行的依赖表达式
+                dt_data = self.get_data.get_dt_data(i)  # 获取方法反射值
                 """----------获取多数据形式------------"""
                 a_expression_n = self.get_data.get_qh_a_expression_n(i)  # a关联场景接口-表达式(长度)
                 b_expression_n = self.get_data.get_qh_b_expression_n(i)  # b本次执行场景接口-表达式(长度)
@@ -91,6 +92,7 @@ class RunMain:
                                 for num in range(num_a):
                                     request_header[depend_key_header[num]] = data_r_value[num]
                                 request_header.update(data_response_value[1])
+
 
                             if kn[0] == '2':  # 多个依赖 request_data依赖
                                 depend_data_Request_data = DependentData(c_name, self.sheetId,
@@ -128,7 +130,6 @@ class RunMain:
                 if 'login/submit' in request_url:
                     self.get_hea.get_houtai_login(request_header,request_data)
 
-
                 if 'recharge/do/submit' in request_url:
                     uid = request_header['uid']
                     token = request_header['token']
@@ -141,10 +142,19 @@ class RunMain:
                 # ========---单一接口执行接口测试请求---===========
                 print('----------------------{0}-----------------'.format(caseNme))
                 self.get_data.write_response(i, '')
+
+                # ========-- 方法反射 --========
+                if dt_data is not None:
+                    getattr_method = ActionData()
+                    excute_method = getattr(getattr_method, dt_data)
+                    excute_method()
+
                 if request_ba  == 'a':
                     res = self.run_method.run_main(request_method,url_pc+request_url,request_data,request_header)
-                else:
+                elif request_ba == 'b':
                     res = self.run_method.run_main(request_method, url_Htai+request_url, request_data, request_header)
+                elif request_ba == 'x':
+                    res = self.run_method.run_main(request_method, url_xht+request_url, request_data, request_header)
                 print(res)
                 print(request_data)
 
@@ -156,7 +166,9 @@ class RunMain:
                     d_Compared_q = run_depend_qh.run_qhInterface_key(caseName_k)  # 前端数据返回list
                     d_Compared_h = run_depend_qh.run_response_Interface_key(res1=res,depend_value=qh_response_key)  # 后端数据返回list
                     print(d_Compared_q,d_Compared_h)
+
                     # ======---前后端返回接口数据对比单一数据 判断场景是否执行成功---======
+
                     if d_Compared_q == d_Compared_h:
                         self.get_data.write_qh_response_result(i,'前后端接口数据一致:测试通过')
                         c_pass_count.append(i)
@@ -171,7 +183,6 @@ class RunMain:
                                                                key2=a_expression)  # 前关联数据
                         b_Compared = run_depend_qh.get_num_key(res=json.loads(res), key1=b_expression_n,
                                                                key2=b_expression)  # 后关联数据
-
                         # # 多数据打印
                         # print(a_Compared)
                         # print('=======--------=============')

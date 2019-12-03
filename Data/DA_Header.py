@@ -60,7 +60,6 @@ class DependentDataHeader:
         if 'login/submit' in request_url:
             self.get_hea.get_houtai_login(request_header, request_data)
 
-
         if request_ba == 'a':
             res = run_method.run_main(request_method, url_pc + request_url, request_data, request_header)
         else:

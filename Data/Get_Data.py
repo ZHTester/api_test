@@ -179,12 +179,24 @@ class  GetData:
             return request_data
         return  None
 
+    def get_dt_data(self,row):
+        """
+        获取请求数据  ====---请求数据---====
+        :param row:
+        :return:
+        """
+        dt_data = self.oper_excle.get_cell_value(row,int(dynamic_data))
+        if dt_data is not '':
+            return dt_data
+        return  None
+
     def get_request_case_depend_value(self,row):
         """
         request_data 获取依赖数据的返回值 表达式
         :param row:
         :return:
         """
+        print('-----------------=========================----------------------',row)
         depend_key = self.oper_excle.get_cell_value(row, int(request_case_depend_value))
         if depend_key == "":
             return None
@@ -196,7 +208,7 @@ class  GetData:
         :param name_index:
         :param k_num:
         :param row:
-        :return: 1-token>uid   <2-goodsId
+        :return: 1-token>uid <2-goodsId
         """
         depend_data = self.oper_excle.get_cell_value(row, int(request_filed_depend_key)).split("<")
         if len(depend_data)>1:

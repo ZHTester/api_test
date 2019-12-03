@@ -9,10 +9,18 @@
 动态生成值  方法反射
 
 """
+import time
+
+
 class ActionData:
     def ftime(self,*args):
         pass
 
     def etime(self,*args):
         pass
+
+    @staticmethod
+    def time_sleep(*args):
+        time.sleep(3)
+
 

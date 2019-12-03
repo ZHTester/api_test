@@ -39,10 +39,14 @@ class DependentData:
         return row_data
 
     def get_Association_case(self,update_da=None):
+        global dependCase
         """第一个接口关联运行方式"""
         run_method = RunMethod(self.sheetId)
         row_num = self.oper_excel.get_row_num(self.CaseId)  # 获取 casename 对应的行号
         dependCase = self.getdata.get_is_depend(row_num)  # 拿到case依赖执行依赖
+        if "<" in dependCase:
+            dependCase = dependCase.split("<")[0]
+
         dependCase = dependCase.split('-')[1]
         row_num_header = self.oper_excel.get_row_num(dependCase)  # 获取 casename 对应的行号
 
@@ -53,14 +57,13 @@ class DependentData:
         request_header = self.getdata.get_is_header(row_num_header)
         request_method = self.getdata.get_is_requestMethod(row_num_header)  # 拿到请求方法
 
-        if update_da is not None:
-            print(update_da, row_num)
-            request_data.update(update_da)
 
         if self.update is not None:
             request_data.update(self.update)
 
         if 'login/username' in request_url:
+            if update_da is not None:
+                request_data.update(update_da)
             self.get_hea.get_qiantai_login(request_header)
 
         if 'login/submit' in request_url:
@@ -77,8 +80,19 @@ class DependentData:
             except Exception as e:
                 self.getdata.write_result(row_num, '系统维护')
                 print('====a系统维护=====错误信息>{0}===错误行>{1}'.format(e,row_num))
-        else:
+        elif request_ba == 'b':
             res = run_method.run_main(request_method, url_Htai + request_url, request_data, request_header)
+            res = json.loads(res)
+            try:
+                token1 = res['data']['token']
+                uid = res['data']['userId']
+                request_header.update({'token': token1, 'uid': str(uid)})
+                return request_header,row_num
+            except Exception as e:
+                self.getdata.write_result(row_num, '系统维护')
+                print('===b系统维护=====错误信息>{0}===错误行>{1}'.format(e,row_num))
+        elif request_ba == 'x':
+            res = run_method.run_main(request_method, url_xht+request_url, request_data, request_header)
             res = json.loads(res)
             try:
                 token1 = res['data']['token']
@@ -94,7 +108,7 @@ class DependentData:
         运行依赖的caseID case request 请求
         :return:
         """
-        global AssociationH_Header
+        global AssociationH_Header, res
         run_method  = RunMethod(self.sheetId)
         row_num = self.oper_excel.get_row_num(self.CaseId)  # 获取 casename 对应的行号
         dependCase = self.getdata.get_is_depend(row_num)  # 拿到case依赖 执行依赖
@@ -127,8 +141,11 @@ class DependentData:
 
         if request_ba == 'a':
             res = run_method.run_main(request_method, url_pc + request_url, request_data, request_header)
-        else:
+        elif request_ba == 'b':
             res = run_method.run_main(request_method, url_Htai + request_url, request_data, request_header)
+        elif request_ba == 'x':
+            res = run_method.run_main(request_method, url_xht + request_url, request_data, request_header)
+
         try:
             if dependCase is not None:
                 if AssociationH_Header[1]:
@@ -137,6 +154,8 @@ class DependentData:
                 return json.loads(res)
         except Exception as e:
             print('====系统维护=====错误信息>{0}===错误行>{1}'.format(e,row_num))
+
+
 
     def get_data_for_key(self,row,num_dk,name_index):
         """
@@ -198,5 +217,4 @@ class DependentData:
                             return depend_value,response_data[1],response_data[2]
                         else:
                             return depend_value
-
 

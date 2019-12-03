@@ -110,6 +110,9 @@ class QianHouCompared:
                     json_exe = parse(depend_i)  # 获取对表达式
                     madle = json_exe.find(response_data)  # 使用json_path获取数据
                     result1 = [math.value for math in madle][0]
+                    if type(result1) is tuple:
+                        result1 = int(result1)
+
                     result1 = str(result1)
                     depend_value1.append(result1)
                 except IndexError as e:

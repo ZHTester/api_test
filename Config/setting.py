@@ -66,3 +66,5 @@ charset_Mysql = 'utf8'
 # ==============-----前后台接口地址前缀-----===========================
 url_pc = 'http://www.aalgds.com/api/'
 url_Htai = 'http://intra.aalgds.com/api/'
+
+url_xht = 'http://intra.fundmng.com/api/'
