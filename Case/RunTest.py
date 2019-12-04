@@ -149,9 +149,6 @@ class RunMain:
                     excute_method = getattr(getattr_method, dt_data)
                     excute_method()
 
-                    dt_data = excute_method()
-                    request_data.update()
-
 
                 if request_ba  == 'a':
                     res = self.run_method.run_main(request_method,url_pc+request_url,request_data,request_header)
@@ -201,7 +198,7 @@ class RunMain:
                             d_fail_count.append(i)
 
                 # ======---单一接口 执行断言操作判断接口是否执行成功---======
-                if self.comm.is_contain(request_expect[0], request_expect[1],res):
+                if self.comm.is_contain(request_expect[0], request_expect[0],res):
                     self.get_data.write_result(i, '测试通过')
                     self.get_data.write_response(i, res)  #  写入正常数据
                     pass_count.append(i)
