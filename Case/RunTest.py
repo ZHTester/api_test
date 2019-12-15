@@ -37,7 +37,7 @@ class RunMain:
 
     def go_run(self):
         # ======----成功失败统计变量----=========
-        global data_response_v,res, data_rr_value, Compared_res
+        global data_response_v, data_rr_value, Compared_res, res
         # 单一接口统计
         pass_count = []
         fail_count = []
@@ -149,7 +149,6 @@ class RunMain:
                     excute_method = getattr(getattr_method, dt_data)
                     excute_method()
 
-
                 if request_ba  == 'a':
                     res = self.run_method.run_main(request_method,url_pc+request_url,request_data,request_header)
                 elif request_ba == 'b':
@@ -158,6 +157,7 @@ class RunMain:
                     res = self.run_method.run_main(request_method, url_xht+request_url, request_data, request_header)
                 print(res)
                 print(request_data)
+
 
                 if qh_response_data is not '':
                     # =====-----前后端返回接口数据对比 单一数据-----======
@@ -169,7 +169,6 @@ class RunMain:
                     print(d_Compared_q,d_Compared_h)
 
                     # ======---前后端返回接口数据对比单一数据 判断场景是否执行成功---======
-
                     if d_Compared_q == d_Compared_h:
                         self.get_data.write_qh_response_result(i,'前后端接口数据一致:测试通过')
                         c_pass_count.append(i)
@@ -178,16 +177,19 @@ class RunMain:
                         c_fail_count.append(i)
 
                     # =====-----场景接口前后台多数据对比逻辑-----======
+
                     if a_expression_n:
                         Compared_res = run_depend_qh.run_qhInterface()  # 返回数据
                         a_Compared = run_depend_qh.get_num_key(res=Compared_res, key1=a_expression_n,
                                                                key2=a_expression)  # 前关联数据
                         b_Compared = run_depend_qh.get_num_key(res=json.loads(res), key1=b_expression_n,
                                                                key2=b_expression)  # 后关联数据
-                        # # 多数据打印
-                        # print(a_Compared)
-                        #                         # print('=======--------=============')
-                        #                         # print(b_Compared)
+
+                        # 多数据打印
+                        print(a_Compared)
+                        print('=======-----多数据---=============')
+                        print(b_Compared)
+
 
                     # ======---前后端返回接口数据对比多数据 判断场景是否执行成功---======
                         if a_Compared == b_Compared:
