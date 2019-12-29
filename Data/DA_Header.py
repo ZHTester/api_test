@@ -86,7 +86,7 @@ class DependentDataHeader:
                     depend_data  = kn[1].split(">") # 分隔符可以填入多个表达式
                     response_data = self.run_dependent()
                     for depend_i in depend_data:
-                        json_exe = parse(depend_i)  # 获取对表达式
+                        json_exe = parse(depend_i)  # 获取对表达式 对表达式进行处理
                         madle = json_exe.find(response_data[0])  # 使用json_path获取数据
                         try:
                             result1 = [math.value for math in madle][0]
